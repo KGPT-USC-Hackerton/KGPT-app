@@ -39,6 +39,7 @@ export default function CareScreen({ route, navigation }) {
   const [photoHistoryId, setPhotoHistoryId] = useState(null);
   const [combinedResult, setCombinedResult] = useState(null);
   const [combinedImages, setCombinedImages] = useState([]); // 분석 사진 URL 목록
+  const [combinedScores, setCombinedScores] = useState(null); // 총점/카테고리 점수
   const [combinedLoading, setCombinedLoading] = useState(false);
   const [combinedError, setCombinedError] = useState(null);
 
@@ -196,6 +197,7 @@ export default function CareScreen({ route, navigation }) {
     setCombinedError(null);
     setCombinedResult(null);
     setCombinedImages([]);
+    setCombinedScores(null);
 
     try {
       const res = await fetch(`${BACKEND_BASE_URL}/api/ai/combined-analysis`, {
@@ -218,6 +220,7 @@ export default function CareScreen({ route, navigation }) {
 
       setCombinedResult(json.analysis);
       setCombinedImages(Array.isArray(json.images) ? json.images : []);
+      setCombinedScores(json.scores || null);
       setReloadKey(prev => prev + 1); // 기록 갱신
     } catch (error) {
       console.error('통합 분석 오류:', error);
@@ -244,6 +247,7 @@ export default function CareScreen({ route, navigation }) {
     setCombinedResult(null);
     setCombinedError(null);
     setCombinedLoading(false);
+    setCombinedScores(null);
     setFollowupAnswers([]);
     setStep('intro');
   };
@@ -420,6 +424,7 @@ export default function CareScreen({ route, navigation }) {
               <CombinedResultView
                 result={combinedResult}
                 images={combinedImages}
+                scores={combinedScores}
                 onRestart={restartFlow}
               />
             )}
@@ -438,8 +443,47 @@ const WIZARD_STEPS = [
   { key: 'result', label: 'Analysis' },
 ];
 
-// 통합 분석 결과 렌더링
-function CombinedResultView({ result, images = [], onRestart }) {
+// 점수 → 등급/색상
+function gradeFor(s) {
+  if (s >= 80) return { label: 'Good', color: '#16a34a', bg: '#dcfce7' };
+  if (s >= 60) return { label: 'Fair', color: '#f59e0b', bg: '#fef3c7' };
+  return { label: 'Needs care', color: '#dc2626', bg: '#fee2e2' };
+}
+
+const CATEGORY_DEFS = [
+  ['oral_care_score', 'Oral care'],
+  ['cavity_dryness_score', 'Cavity & dryness'],
+  ['smoking_drinking_score', 'Smoking & drinking'],
+  ['cariogenic_food_score', 'Cariogenic food'],
+  ['sensitivity_fluoride_score', 'Sensitivity & fluoride'],
+  ['oral_habits_score', 'Oral habits'],
+];
+
+// 위험/개선/추천을 색상 카드로 렌더 (빈 그룹은 숨김)
+function FindingGroup({ icon, title, items, color, bg }) {
+  if (!items || items.length === 0) return null;
+  // 화면 간결화를 위해 최대 3개만 노출.
+  const shown = items.slice(0, 3);
+  return (
+    <View style={styles.groupCard}>
+      <View style={styles.groupHeader}>
+        <Text style={styles.groupIcon}>{icon}</Text>
+        <Text style={styles.groupTitle}>{title}</Text>
+        <View style={[styles.countBadge, { backgroundColor: bg }]}>
+          <Text style={[styles.countText, { color }]}>{shown.length}</Text>
+        </View>
+      </View>
+      {shown.map((it, i) => (
+        <View key={i} style={[styles.findingRow, { borderLeftColor: color }]}>
+          <Text style={styles.findingText}>{it}</Text>
+        </View>
+      ))}
+    </View>
+  );
+}
+
+// 통합 분석 결과 렌더링 — 점수 링 · 카테고리 바 · 핵심 카드 · 상세 접기
+function CombinedResultView({ result, images = [], scores = null, onRestart }) {
   const {
     summary = '',
     details = '',
@@ -449,33 +493,26 @@ function CombinedResultView({ result, images = [], onRestart }) {
     photo = {},
   } = result || {};
 
-  const Section = ({ title, children }) => (
-    <View style={styles.resultCard}>
-      <Text style={styles.resultCardTitle}>{title}</Text>
-      {children}
-    </View>
-  );
+  const [showDetails, setShowDetails] = useState(false);
 
-  const BulletList = ({ items }) =>
-    (items || []).length === 0 ? (
-      <Text style={styles.resultText}>None</Text>
-    ) : (
-      items.map((it, idx) => (
-        <View key={idx} style={styles.bulletRow}>
-          <Text style={styles.bulletDot}>•</Text>
-          <Text style={styles.bulletText}>{it}</Text>
-        </View>
-      ))
-    );
+  const total =
+    scores && scores.total_score != null
+      ? Math.round(Number(scores.total_score))
+      : null;
+  const totalGrade = total != null ? gradeFor(total) : null;
 
-  const photoParts = [
-    ['Upper teeth', photo.upper],
-    ['Lower teeth', photo.lower],
-    ['Front teeth', photo.front],
-  ].filter(([, v]) => v);
+  const categoryBars = scores
+    ? CATEGORY_DEFS.filter(([k]) => scores[k] != null).map(([k, label]) => ({
+        label,
+        value: Math.round(Number(scores[k])),
+      }))
+    : [];
 
-  // 분석 결과 사진(충치 표시가 렌더링된 이미지). 없으면 원본으로 대체한다.
-  const POSITION_LABELS = { upper: 'Upper teeth', lower: 'Lower teeth', front: 'Front teeth' };
+  const POSITION_LABELS = {
+    upper: 'Upper teeth',
+    lower: 'Lower teeth',
+    front: 'Front teeth',
+  };
   const photoCards = (images || [])
     .map(img => ({
       key: img.image_type,
@@ -485,42 +522,94 @@ function CombinedResultView({ result, images = [], onRestart }) {
     }))
     .filter(c => !!c.url);
 
+  const photoNotes = [
+    ['Upper teeth', photo.upper],
+    ['Lower teeth', photo.lower],
+    ['Front teeth', photo.front],
+  ].filter(([, v]) => v);
+
+  const hasDetails = !!details || photoNotes.length > 0 || !!photo.overall;
+
   return (
     <View>
-      <View style={styles.resultHeader}>
-        <Text style={styles.resultHeaderIcon}>🩺</Text>
-        <Text style={styles.resultHeaderTitle}>Combined analysis result</Text>
+      {/* 히어로: 총점 + 요약 */}
+      <View style={styles.heroCard}>
+        {total != null ? (
+          <>
+            <View style={[styles.scoreRing, { borderColor: totalGrade.color }]}>
+              <Text style={[styles.scoreNumber, { color: totalGrade.color }]}>
+                {total}
+              </Text>
+              <Text style={styles.scoreOutOf}>/ 100</Text>
+            </View>
+            <View style={[styles.gradePill, { backgroundColor: totalGrade.bg }]}>
+              <Text style={[styles.gradePillText, { color: totalGrade.color }]}>
+                {totalGrade.label}
+              </Text>
+            </View>
+          </>
+        ) : (
+          <Text style={styles.heroTitle}>Your result</Text>
+        )}
+        {!!summary && <Text style={styles.heroSummary}>{summary}</Text>}
       </View>
 
-      {!!summary && (
-        <Section title="Overall summary">
-          <Text style={styles.resultText}>{summary}</Text>
-        </Section>
+      {/* 카테고리 점수 바 */}
+      {categoryBars.length > 0 && (
+        <View style={styles.card}>
+          <Text style={styles.blockTitle}>Category scores</Text>
+          {categoryBars.map(cat => {
+            const g = gradeFor(cat.value);
+            const pct = Math.max(0, Math.min(100, cat.value));
+            return (
+              <View key={cat.label} style={styles.barRow}>
+                <Text style={styles.barLabel} numberOfLines={1}>
+                  {cat.label}
+                </Text>
+                <View style={styles.barTrack}>
+                  <View
+                    style={[
+                      styles.barFill,
+                      { width: `${pct}%`, backgroundColor: g.color },
+                    ]}
+                  />
+                </View>
+                <Text style={[styles.barValue, { color: g.color }]}>
+                  {cat.value}
+                </Text>
+              </View>
+            );
+          })}
+        </View>
       )}
 
-      {!!details && (
-        <Section title="Detailed analysis">
-          <Text style={styles.resultText}>{details}</Text>
-        </Section>
-      )}
+      {/* 핵심: 위험 / 개선 / 추천 */}
+      <FindingGroup
+        icon="⚠️"
+        title="Risk factors"
+        items={risk_factors}
+        color="#dc2626"
+        bg="#fee2e2"
+      />
+      <FindingGroup
+        icon="🔧"
+        title="Habits to improve"
+        items={improvements}
+        color="#2563eb"
+        bg="#dbeafe"
+      />
+      <FindingGroup
+        icon="🪥"
+        title="Recommendations"
+        items={recommendations}
+        color="#16a34a"
+        bg="#dcfce7"
+      />
 
-      <Section title="⚠️ Risk factors">
-        <BulletList items={risk_factors} />
-      </Section>
-
-      <Section title="✅ Habits to improve">
-        <BulletList items={improvements} />
-      </Section>
-
-      <Section title="🪥 Personalized recommendations">
-        <BulletList items={recommendations} />
-      </Section>
-
+      {/* 분석 사진 */}
       {photoCards.length > 0 && (
-        <Section title="🦷 Teeth analysis photos">
-          <Text style={styles.photoHint}>
-            These photos show the areas analyzed by AI.
-          </Text>
+        <View style={styles.card}>
+          <Text style={styles.blockTitle}>Teeth photos</Text>
           {photoCards.map(card => (
             <View key={card.key} style={styles.photoItem}>
               <Text style={styles.resultSubLabel}>
@@ -534,23 +623,38 @@ function CombinedResultView({ result, images = [], onRestart }) {
               />
             </View>
           ))}
-        </Section>
+        </View>
       )}
 
-      {(photoParts.length > 0 || photo.overall) && (
-        <Section title="📷 Photo analysis summary">
-          {photoParts.map(([label, text]) => (
-            <View key={label} style={{ marginBottom: 8 }}>
-              <Text style={styles.resultSubLabel}>{label}</Text>
-              <Text style={styles.resultText}>{text}</Text>
-            </View>
-          ))}
-          {!!photo.overall && (
-            <Text style={[styles.resultText, { marginTop: 4 }]}>
-              {photo.overall}
+      {/* 상세 분석 (기본 접힘) */}
+      {hasDetails && (
+        <View style={styles.card}>
+          <TouchableOpacity
+            style={styles.collapseHeader}
+            onPress={() => setShowDetails(v => !v)}
+          >
+            <Text style={styles.blockTitle}>Detailed analysis</Text>
+            <Text style={styles.collapseChevron}>
+              {showDetails ? '▲' : '▼'}
             </Text>
+          </TouchableOpacity>
+          {showDetails && (
+            <View style={{ marginTop: 10 }}>
+              {!!details && <Text style={styles.resultText}>{details}</Text>}
+              {photoNotes.map(([label, text]) => (
+                <View key={label} style={{ marginTop: 12 }}>
+                  <Text style={styles.resultSubLabel}>{label}</Text>
+                  <Text style={styles.resultText}>{text}</Text>
+                </View>
+              ))}
+              {!!photo.overall && (
+                <Text style={[styles.resultText, { marginTop: 12 }]}>
+                  {photo.overall}
+                </Text>
+              )}
+            </View>
           )}
-        </Section>
+        </View>
       )}
 
       <TouchableOpacity style={styles.primaryButton} onPress={onRestart}>
@@ -565,6 +669,91 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f8f9fa',
   },
+
+  // ===== 결과 화면(직관적 리디자인) =====
+  heroCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 12,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+  },
+  scoreRing: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    borderWidth: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  scoreNumber: { fontSize: 40, fontWeight: '800', lineHeight: 44 },
+  scoreOutOf: { fontSize: 12, color: '#9ca3af', marginTop: -2 },
+  gradePill: {
+    marginTop: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 5,
+    borderRadius: 999,
+  },
+  gradePillText: { fontSize: 13, fontWeight: '700' },
+  heroTitle: { fontSize: 20, fontWeight: '800', color: '#111827' },
+  heroSummary: {
+    marginTop: 14,
+    fontSize: 14,
+    lineHeight: 21,
+    color: '#374151',
+    textAlign: 'center',
+  },
+  blockTitle: { fontSize: 15, fontWeight: '700', color: '#111827' },
+  // 카테고리 바
+  barRow: { flexDirection: 'row', alignItems: 'center', marginTop: 12 },
+  barLabel: { width: 120, fontSize: 12, color: '#4b5563' },
+  barTrack: {
+    flex: 1,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#f1f5f9',
+    overflow: 'hidden',
+    marginHorizontal: 8,
+  },
+  barFill: { height: 8, borderRadius: 4 },
+  barValue: { width: 30, textAlign: 'right', fontSize: 13, fontWeight: '700' },
+  // 핵심 카드
+  groupCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 14,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+  },
+  groupHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
+  groupIcon: { fontSize: 16, marginRight: 8 },
+  groupTitle: { flex: 1, fontSize: 15, fontWeight: '700', color: '#111827' },
+  countBadge: {
+    minWidth: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 8,
+  },
+  countText: { fontSize: 13, fontWeight: '800' },
+  findingRow: {
+    borderLeftWidth: 3,
+    paddingLeft: 12,
+    paddingVertical: 6,
+    marginTop: 6,
+  },
+  findingText: { fontSize: 14, lineHeight: 20, color: '#374151' },
+  // 접기
+  collapseHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  collapseChevron: { fontSize: 12, color: '#9ca3af' },
   scroll: {
     flex: 1,
   },
