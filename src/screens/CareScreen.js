@@ -427,11 +427,11 @@ const WIZARD_STEPS = [
 // 통합 분석 결과 렌더링
 function CombinedResultView({
   result,
+  images = [],
   onRestart,
   onOpenRecommendations,
   canOpenRecommendations,
 }) {
-function CombinedResultView({ result, images = [], onRestart }) {
   const {
     summary = '',
     details = '',
