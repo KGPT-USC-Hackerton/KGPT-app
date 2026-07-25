@@ -17,6 +17,7 @@ import SurveyComponent from '../components/SurveyComponent';
 import PhotoAnalysisComponent from '../components/PhotoAnalysisComponent';
 import OralCareRecordComponent from '../components/OralCareRecordComponent';
 import PhotoAnalysisHistoryList from '../components/PhotoAnalysisHistoryList';
+import FollowupQuestionsComponent from '../components/FollowupQuestionsComponent';
 
 const tabs = [
   { id: 'survey', label: 'Survey' },
@@ -40,6 +41,9 @@ export default function CareScreen({ route, navigation }) {
   const [combinedImages, setCombinedImages] = useState([]); // 분석 사진 URL 목록
   const [combinedLoading, setCombinedLoading] = useState(false);
   const [combinedError, setCombinedError] = useState(null);
+
+  // AI 사전 문진(추가 질문) 답변 [{ question, answer }]
+  const [followupAnswers, setFollowupAnswers] = useState([]);
 
   // score_history 기반 기록
   const [records, setRecords] = useState([]);
@@ -165,10 +169,20 @@ export default function CareScreen({ route, navigation }) {
     setStep('photo');
   };
 
-  // [2단계] 사진 3장 분석 완료 → history_id 확보 후 [3단계] 통합 분석으로 진행
+  // [2단계] 사진 3장 분석 완료 → history_id 확보 후 [3단계] AI 추가 문진으로 진행
   const handlePhotoComplete = historyId => {
     console.log('🔍 사진 분석 완료, history_id =', historyId);
     setPhotoHistoryId(historyId);
+    setStep('followup');
+  };
+
+  // [3단계] AI 추가 문진 완료/건너뛰기 → 답변을 담아 [4단계] 통합 분석으로 진행
+  const handleFollowupComplete = collectedAnswers => {
+    setFollowupAnswers(Array.isArray(collectedAnswers) ? collectedAnswers : []);
+    setStep('result');
+  };
+  const handleFollowupSkip = () => {
+    setFollowupAnswers([]);
     setStep('result');
   };
 
@@ -191,6 +205,7 @@ export default function CareScreen({ route, navigation }) {
           user_id: userId,
           survey_session_id: surveySessionId,
           history_id: photoHistoryId,
+          followup_answers: followupAnswers,
         }),
       });
       const json = await res.json();
@@ -229,10 +244,12 @@ export default function CareScreen({ route, navigation }) {
     setCombinedResult(null);
     setCombinedError(null);
     setCombinedLoading(false);
+    setFollowupAnswers([]);
     setStep('intro');
   };
 
-  const stepIndex = { intro: 0, survey: 0, photo: 1, result: 2 }[step] ?? 0;
+  const stepIndex =
+    { intro: 0, survey: 0, photo: 1, followup: 2, result: 3 }[step] ?? 0;
 
   return (
     <View style={styles.container}>
@@ -354,7 +371,21 @@ export default function CareScreen({ route, navigation }) {
           </View>
         )}
 
-        {/* 3단계: 통합 분석 결과 */}
+        {/* 3단계: AI 추가 문진 */}
+        {step === 'followup' && (
+          <View style={styles.section}>
+            <FollowupQuestionsComponent
+              backendBaseUrl={BACKEND_BASE_URL}
+              userId={userId}
+              surveySessionId={surveySessionId}
+              historyId={photoHistoryId}
+              onComplete={handleFollowupComplete}
+              onSkip={handleFollowupSkip}
+            />
+          </View>
+        )}
+
+        {/* 4단계: 통합 분석 결과 */}
         {step === 'result' && (
           <View style={styles.section}>
             {combinedLoading && (
@@ -403,6 +434,7 @@ export default function CareScreen({ route, navigation }) {
 const WIZARD_STEPS = [
   { key: 'survey', label: 'Survey' },
   { key: 'photo', label: 'Oral photos' },
+  { key: 'followup', label: 'Questions' },
   { key: 'result', label: 'Analysis' },
 ];
 
