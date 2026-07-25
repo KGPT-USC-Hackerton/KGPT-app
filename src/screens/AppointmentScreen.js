@@ -36,6 +36,12 @@ export default function AppointmentScreen() {
   const [availableSlots, setAvailableSlots] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedSlot, setSelectedSlot] = useState(null);
+  // 달력에 표시 중인 '월'(해당 월 1일)
+  const [calendarMonth, setCalendarMonth] = useState(() => {
+    const d = new Date();
+    d.setDate(1);
+    return d;
+  });
   const [loadingDates, setLoadingDates] = useState(false);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [loadingSurvey, setLoadingSurvey] = useState(false);
@@ -228,7 +234,13 @@ export default function AppointmentScreen() {
       
       const response = await getAvailableDates(clinic.id, today, toDate);
       if (response.success) {
-        setAvailableDates(response.data || []);
+        const dates = response.data || [];
+        setAvailableDates(dates);
+        // 달력을 첫 예약 가능 날짜의 월로 이동
+        if (dates.length > 0) {
+          const [fy, fm] = dates[0].split('-').map(Number);
+          setCalendarMonth(new Date(fy, fm - 1, 1));
+        }
         setShowDatePicker(true);
       } else {
         Alert.alert('Error', 'Unable to load available dates.');
@@ -497,14 +509,119 @@ export default function AppointmentScreen() {
       return dateString;
     }
 
-    // 한국어 형식으로 포맷팅 (KST 기준)
-    return date.toLocaleDateString('ko-KR', {
+    // 영어 형식으로 포맷팅 (예: "Fri, Jul 25, 2026")
+    return date.toLocaleDateString('en-US', {
       year: 'numeric',
-      month: 'long',
+      month: 'short',
       day: 'numeric',
       weekday: 'short',
-      timeZone: 'Asia/Seoul' // KST 명시
     });
+  };
+
+  const CAL_WEEKDAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+  const CAL_MONTHS = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December',
+  ];
+  const pad2 = (n) => String(n).padStart(2, '0');
+
+  // 예약 가능 날짜를 달력(월 그리드)로 렌더. 가능 날짜만 선택 가능.
+  const renderCalendar = () => {
+    const availSet = new Set(availableDates);
+    const year = calendarMonth.getFullYear();
+    const month = calendarMonth.getMonth();
+    const firstWeekday = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    const monthKey = (y, m) => y * 12 + m;
+    const cur = monthKey(year, month);
+    let minK = cur;
+    let maxK = cur;
+    if (availableDates.length > 0) {
+      const ks = availableDates.map((d) => {
+        const [y, m] = d.split('-').map(Number);
+        return monthKey(y, m - 1);
+      });
+      minK = Math.min(...ks);
+      maxK = Math.max(...ks);
+    }
+    const canPrev = cur > minK;
+    const canNext = cur < maxK;
+    const shiftMonth = (delta) => setCalendarMonth(new Date(year, month + delta, 1));
+
+    const cells = [];
+    for (let i = 0; i < firstWeekday; i++) cells.push(null);
+    for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+
+    return (
+      <View style={styles.calendar}>
+        <View style={styles.calHeader}>
+          <TouchableOpacity
+            disabled={!canPrev}
+            onPress={() => shiftMonth(-1)}
+            style={styles.calNav}
+          >
+            <Text style={[styles.calNavText, !canPrev && styles.calNavDisabled]}>‹</Text>
+          </TouchableOpacity>
+          <Text style={styles.calMonthLabel}>
+            {CAL_MONTHS[month]} {year}
+          </Text>
+          <TouchableOpacity
+            disabled={!canNext}
+            onPress={() => shiftMonth(1)}
+            style={styles.calNav}
+          >
+            <Text style={[styles.calNavText, !canNext && styles.calNavDisabled]}>›</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.calWeekRow}>
+          {CAL_WEEKDAYS.map((w, i) => (
+            <Text key={w} style={[styles.calWeekday, i === 0 && styles.calSunday]}>
+              {w}
+            </Text>
+          ))}
+        </View>
+
+        <View style={styles.calGrid}>
+          {cells.map((d, idx) => {
+            if (d === null) {
+              return <View key={`blank-${idx}`} style={styles.calCell} />;
+            }
+            const ds = `${year}-${pad2(month + 1)}-${pad2(d)}`;
+            const isAvail = availSet.has(ds);
+            const isSel = selectedDate === ds;
+            return (
+              <TouchableOpacity
+                key={ds}
+                style={styles.calCell}
+                disabled={!isAvail}
+                activeOpacity={0.7}
+                onPress={() => handleDateSelect(ds)}
+              >
+                <View
+                  style={[
+                    styles.calDay,
+                    isAvail && styles.calDayAvail,
+                    isSel && styles.calDaySelected,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.calDayText,
+                      !isAvail && styles.calDayTextDisabled,
+                      isSel && styles.calDayTextSelected,
+                    ]}
+                  >
+                    {d}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </View>
+    );
   };
 
   // 날짜 선택 모달
@@ -535,25 +652,7 @@ export default function AppointmentScreen() {
                 <Text style={styles.emptyMessage}>No available dates.</Text>
               </View>
             ) : (
-              <View style={styles.dateList}>
-                {availableDates.map((date, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    style={[
-                      styles.dateItem,
-                      selectedDate === date && styles.dateItemSelected
-                    ]}
-                    onPress={() => handleDateSelect(date)}
-                  >
-                    <Text style={[
-                      styles.dateText,
-                      selectedDate === date && styles.dateTextSelected
-                    ]}>
-                      {formatDateKST(date)}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
+              renderCalendar()
             )}
           </ScrollView>
         </View>
@@ -1758,6 +1857,83 @@ const styles = StyleSheet.create({
   dateTextSelected: {
     color: '#1d4ed8',
     fontWeight: '600',
+  },
+  // 달력
+  calendar: {
+    paddingBottom: 8,
+  },
+  calHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  calNav: {
+    paddingHorizontal: 14,
+    paddingVertical: 4,
+  },
+  calNavText: {
+    fontSize: 26,
+    lineHeight: 28,
+    color: '#2563eb',
+    fontWeight: '700',
+  },
+  calNavDisabled: {
+    color: '#d1d5db',
+  },
+  calMonthLabel: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#111827',
+  },
+  calWeekRow: {
+    flexDirection: 'row',
+    marginBottom: 6,
+  },
+  calWeekday: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#6b7280',
+  },
+  calSunday: {
+    color: '#ef4444',
+  },
+  calGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  calCell: {
+    width: '14.2857%',
+    aspectRatio: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 2,
+  },
+  calDay: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  calDayAvail: {
+    backgroundColor: '#eff6ff',
+  },
+  calDaySelected: {
+    backgroundColor: '#2563eb',
+  },
+  calDayText: {
+    fontSize: 14,
+    color: '#111827',
+  },
+  calDayTextDisabled: {
+    color: '#d1d5db',
+  },
+  calDayTextSelected: {
+    color: '#ffffff',
+    fontWeight: '700',
   },
   timeList: {
     flexDirection: 'row',
