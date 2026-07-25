@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
+  Image,
   StyleSheet,
   TouchableOpacity,
   LayoutAnimation,
@@ -138,6 +139,19 @@ export default function OralCareRecordComponent({
 
         const analysis = detail?.analysis;
         const recommendations = detail?.recommendations || [];
+        const POSITION_LABELS = {
+          upper: 'Upper teeth',
+          lower: 'Lower teeth',
+          front: 'Front teeth',
+        };
+        const photoCards = (detail?.images || [])
+          .map(img => ({
+            key: img.image_type,
+            label: POSITION_LABELS[img.image_type] || img.image_type,
+            url: img.analyzed_image_url || img.original_image_url,
+            isAnalyzed: !!img.analyzed_image_url,
+          }))
+          .filter(c => !!c.url);
 
         return (
           <TouchableOpacity
@@ -237,30 +251,38 @@ export default function OralCareRecordComponent({
                         </View>
                       )}
 
-                    {/* 추천 용품 리스트 */}
+                    {/* 추천 (짧은 조언 문자열 배열) */}
                     {Array.isArray(recommendations) &&
                       recommendations.length > 0 && (
                         <View style={styles.detailSection}>
-                          <Text style={styles.detailTitle}>Recommended oral care products</Text>
+                          <Text style={styles.detailTitle}>Recommendations</Text>
                           {recommendations.map((rec, idx) => (
-                            <View key={idx} style={styles.productRow}>
-                              <TouchableOpacity
-                                onPress={() => openProductLink(rec.link)}
-                                activeOpacity={0.7}
-                              >
-                                <Text style={styles.productName}>
-                                  {rec.name || 'Product'}
-                                </Text>
-                              </TouchableOpacity>
-                              {rec.reason && (
-                                <Text style={styles.productReason}>
-                                  {rec.reason}
-                                </Text>
-                              )}
-                            </View>
+                            <Text key={idx} style={styles.bulletText}>
+                              • {typeof rec === 'string' ? rec : rec?.name || ''}
+                            </Text>
                           ))}
                         </View>
                       )}
+
+                    {/* 분석 결과 사진 */}
+                    {photoCards.length > 0 && (
+                      <View style={styles.detailSection}>
+                        <Text style={styles.detailTitle}>Analysis photos</Text>
+                        {photoCards.map(card => (
+                          <View key={card.key} style={styles.photoItem}>
+                            <Text style={styles.photoLabel}>
+                              {card.label}
+                              {!card.isAnalyzed && ' (original)'}
+                            </Text>
+                            <Image
+                              source={{ uri: card.url }}
+                              style={styles.photoImage}
+                              resizeMode="contain"
+                            />
+                          </View>
+                        ))}
+                      </View>
+                    )}
                   </View>
                 )}
 
@@ -391,6 +413,23 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#4b5563',
     lineHeight: 18,
+  },
+
+  // 분석 결과 사진
+  photoItem: {
+    marginTop: 8,
+  },
+  photoLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#374151',
+    marginBottom: 4,
+  },
+  photoImage: {
+    width: '100%',
+    height: 200,
+    borderRadius: 8,
+    backgroundColor: '#f1f5f9',
   },
 
   // 기존 카테고리별 점수 영역 (선택)
