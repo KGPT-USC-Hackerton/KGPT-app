@@ -22,11 +22,26 @@ import AppSettingsScreen from './screens/AppSettingsScreen';
 import HelpScreen from './screens/HelpScreen';
 import TermsOfServiceScreen from './screens/TermsOfServiceScreen';
 import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
+import ProductRecommendationScreen from './screens/care/ProductRecommendationScreen';
+import CartReviewScreen from './screens/care/CartReviewScreen';
 import { getCurrentUser } from './services/authService';
 import { getSurveyCompleted } from './utils/storage';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
+
+// Care Stack Navigator 컴포넌트
+// 기존 Care 탭(CareMain)을 유지하면서 6B 추천/장바구니 화면을 push할 수 있도록
+// native-stack으로 승격한다. (MyPageStack과 동일 패턴)
+export function CareStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="CareMain" component={CareScreen} />
+      <Stack.Screen name="ProductRecommendation" component={ProductRecommendationScreen} />
+      <Stack.Screen name="CartReview" component={CartReviewScreen} />
+    </Stack.Navigator>
+  );
+}
 
 // MyPage Stack Navigator 컴포넌트
 function MyPageStack({ onLogout }) {
@@ -231,7 +246,7 @@ function App() {
 
           <Tab.Screen
             name="Care"
-            component={CareScreen}
+            component={CareStack}
             options={{
               title: '관리',
               tabBarIcon: ({ color, size }) => (

@@ -8,6 +8,7 @@ import {
   Alert,
   TouchableOpacity,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Config from 'react-native-config';
@@ -26,7 +27,7 @@ const tabs = [
 // SurveyComponent 등은 `${BACKEND_BASE_URL}/api/...` 형태로 쓰므로 끝의 '/api'는 제거한다.
 const FALLBACK_BACKEND_BASE_URL = (Config.API_BASE_URL || 'http://localhost:3000/api').replace(/\/api\/?$/, '');
 
-export default function CareScreen({ route }) {
+export default function CareScreen({ route, navigation }) {
   // 통합 위저드 단계: intro → survey → photo → result
   const [step, setStep] = useState('intro');
   const [userId, setUserId] = useState(null);
@@ -36,6 +37,7 @@ export default function CareScreen({ route }) {
   const [surveySessionId, setSurveySessionId] = useState(null);
   const [photoHistoryId, setPhotoHistoryId] = useState(null);
   const [combinedResult, setCombinedResult] = useState(null);
+  const [combinedImages, setCombinedImages] = useState([]); // 분석 사진 URL 목록
   const [combinedLoading, setCombinedLoading] = useState(false);
   const [combinedError, setCombinedError] = useState(null);
 
@@ -179,6 +181,7 @@ export default function CareScreen({ route }) {
     setCombinedLoading(true);
     setCombinedError(null);
     setCombinedResult(null);
+    setCombinedImages([]);
 
     try {
       const res = await fetch(`${BACKEND_BASE_URL}/api/ai/combined-analysis`, {
@@ -199,6 +202,7 @@ export default function CareScreen({ route }) {
       }
 
       setCombinedResult(json.analysis);
+      setCombinedImages(Array.isArray(json.images) ? json.images : []);
       setReloadKey(prev => prev + 1); // 기록 갱신
     } catch (error) {
       console.error('통합 분석 오류:', error);
@@ -226,6 +230,22 @@ export default function CareScreen({ route }) {
     setCombinedError(null);
     setCombinedLoading(false);
     setStep('intro');
+  };
+
+  // 6B: 맞춤 상품 추천 화면으로 이동.
+  // photoHistoryId(=history_id)가 유효한 비어 있지 않은 문자열일 때만 이동한다.
+  // survey_session_id는 optional. user_id / 의료정보는 전달하지 않는다.
+  const canOpenRecommendations =
+    typeof photoHistoryId === 'string' && photoHistoryId.trim() !== '';
+
+  const handleOpenRecommendations = () => {
+    if (!canOpenRecommendations || !navigation) {
+      return;
+    }
+    navigation.navigate('ProductRecommendation', {
+      history_id: photoHistoryId,
+      survey_session_id: surveySessionId || undefined,
+    });
   };
 
   const stepIndex = { intro: 0, survey: 0, photo: 1, result: 2 }[step] ?? 0;
@@ -383,7 +403,10 @@ export default function CareScreen({ route }) {
             {!combinedLoading && !combinedError && combinedResult && (
               <CombinedResultView
                 result={combinedResult}
+                images={combinedImages}
                 onRestart={restartFlow}
+                onOpenRecommendations={handleOpenRecommendations}
+                canOpenRecommendations={canOpenRecommendations}
               />
             )}
           </View>
@@ -401,7 +424,13 @@ const WIZARD_STEPS = [
 ];
 
 // 통합 분석 결과 렌더링
-function CombinedResultView({ result, onRestart }) {
+function CombinedResultView({
+  result,
+  onRestart,
+  onOpenRecommendations,
+  canOpenRecommendations,
+}) {
+function CombinedResultView({ result, images = [], onRestart }) {
   const {
     summary = '',
     details = '',
@@ -436,6 +465,17 @@ function CombinedResultView({ result, onRestart }) {
     ['앞니', photo.front],
   ].filter(([, v]) => v);
 
+  // 분석 결과 사진(충치 표시가 렌더링된 이미지). 없으면 원본으로 대체한다.
+  const POSITION_LABELS = { upper: '윗니', lower: '아랫니', front: '앞니' };
+  const photoCards = (images || [])
+    .map(img => ({
+      key: img.image_type,
+      label: POSITION_LABELS[img.image_type] || img.image_type,
+      url: img.analyzed_image_url || img.original_image_url,
+      isAnalyzed: !!img.analyzed_image_url,
+    }))
+    .filter(c => !!c.url);
+
   return (
     <View>
       <View style={styles.resultHeader}>
@@ -465,7 +505,38 @@ function CombinedResultView({ result, onRestart }) {
 
       <Section title="🪥 맞춤 추천">
         <BulletList items={recommendations} />
+        <TouchableOpacity
+          style={[
+            styles.primaryButton,
+            { marginTop: 12, opacity: canOpenRecommendations ? 1 : 0.5 },
+          ]}
+          onPress={onOpenRecommendations}
+          disabled={!canOpenRecommendations}
+        >
+          <Text style={styles.primaryButtonText}>맞춤 구강관리 상품 보기</Text>
+        </TouchableOpacity>
       </Section>
+
+      {photoCards.length > 0 && (
+        <Section title="🦷 치아 분석 사진">
+          <Text style={styles.photoHint}>
+            AI가 분석한 부위가 표시된 사진입니다.
+          </Text>
+          {photoCards.map(card => (
+            <View key={card.key} style={styles.photoItem}>
+              <Text style={styles.resultSubLabel}>
+                {card.label}
+                {!card.isAnalyzed && ' (원본)'}
+              </Text>
+              <Image
+                source={{ uri: card.url }}
+                style={styles.analyzedImage}
+                resizeMode="contain"
+              />
+            </View>
+          ))}
+        </Section>
+      )}
 
       {(photoParts.length > 0 || photo.overall) && (
         <Section title="📷 사진 분석 요약">
@@ -615,6 +686,22 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#2563eb',
     marginBottom: 2,
+  },
+  // 치아 분석 사진
+  photoHint: {
+    fontSize: 12,
+    color: '#6b7280',
+    marginBottom: 10,
+  },
+  photoItem: {
+    marginBottom: 14,
+  },
+  analyzedImage: {
+    width: '100%',
+    aspectRatio: 4 / 3,
+    borderRadius: 10,
+    backgroundColor: '#e5e7eb',
+    marginTop: 6,
   },
   bulletRow: {
     flexDirection: 'row',

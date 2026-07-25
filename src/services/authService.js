@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { post, get } from './api';
 import { setUser, getUser, removeUser, clearAuthData, setSurveyCompleted, removeTempSignUpData } from '../utils/storage';
 
@@ -11,8 +12,15 @@ export const register = async (userData) => {
     const response = await post('/users/register', userData);
     
     if (response.success && response.data?.user) {
+      const user = response.data.user;
+
       // 사용자 정보 저장
-      await setUser(response.data.user);
+      await setUser(user);
+      // CareScreen 등이 읽는 user_id 키도 로그인 경로와 동일하게 저장한다.
+      // 이 값이 없으면 가입 직후 첫 설문 제출이 user_id 없이 전송되어 실패한다.
+      if (user.id !== undefined && user.id !== null) {
+        await AsyncStorage.setItem('user_id', String(user.id));
+      }
       // 설문 완료 여부 저장
       await setSurveyCompleted(true);
       // 임시 회원가입 정보 삭제
