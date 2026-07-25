@@ -18,13 +18,13 @@ export const detectLips = async (imageUri) => {
     // API URL 확인
     if (!LIP_DETECTION_API_URL) {
       console.error('❌ LIP_DETECTION_API_URL이 설정되지 않았습니다.');
-      throw new Error('입술 검출 API URL이 설정되지 않았습니다.');
+      throw new Error('The lip detection API URL is not configured.');
     }
 
     // 이미지 URI 확인
     if (!imageUri) {
       console.error('❌ 이미지 URI가 제공되지 않았습니다.');
-      throw new Error('이미지 경로가 필요합니다.');
+      throw new Error('An image path is required.');
     }
 
     console.log('🔍 입술 검출 시작:', {
@@ -69,7 +69,7 @@ export const detectLips = async (imageUri) => {
         statusText: response.statusText,
         error: errorText,
       });
-      throw new Error(`서버 오류: ${response.status} - ${response.statusText}`);
+      throw new Error(`Server error: ${response.status} - ${response.statusText}`);
     }
 
     const data = await response.json();
@@ -77,7 +77,7 @@ export const detectLips = async (imageUri) => {
     // 응답 데이터 검증
     if (!data || typeof data !== 'object') {
       console.error('❌ 잘못된 응답 형식:', data);
-      throw new Error('서버에서 잘못된 응답을 받았습니다.');
+      throw new Error('Received an invalid response from the server.');
     }
 
     const result = {
@@ -104,7 +104,7 @@ export const detectLips = async (imageUri) => {
       console.error('❌ 입술 검출 타임아웃 (30초 초과)');
       return {
         success: false,
-        error: '요청 시간이 초과되었습니다. 네트워크 연결을 확인해주세요.',
+        error: 'The request timed out. Please check your network connection.',
         data: {
           lipPoints: [],
           faceDetected: false,
@@ -119,7 +119,7 @@ export const detectLips = async (imageUri) => {
       console.error('❌ 네트워크 오류:', error.message);
       return {
         success: false,
-        error: '네트워크 연결을 확인해주세요.',
+        error: 'Please check your network connection.',
         data: {
           lipPoints: [],
           faceDetected: false,
@@ -136,7 +136,7 @@ export const detectLips = async (imageUri) => {
 
     return {
       success: false,
-      error: error.message || '입술 검출에 실패했습니다.',
+      error: error.message || 'Lip detection failed.',
       data: {
         lipPoints: [],
         faceDetected: false,

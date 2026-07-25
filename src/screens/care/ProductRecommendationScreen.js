@@ -133,7 +133,7 @@ export default function ProductRecommendationScreen({ route, navigation }) {
       }
 
       // 예상치 못한 응답 형식
-      setError({ code: 'INVALID_RESPONSE', message: '분석 상태를 확인할 수 없어요. 다시 시도해 주세요.' });
+      setError({ code: 'INVALID_RESPONSE', message: "We couldn't check the analysis status. Please try again." });
       setPhase('error');
       return;
     }
@@ -145,7 +145,7 @@ export default function ProductRecommendationScreen({ route, navigation }) {
 
   useEffect(() => {
     if (typeof historyId !== 'string' || historyId.trim() === '') {
-      setError({ code: 'INVALID_PARAMS', message: '분석 정보를 찾을 수 없어요. 이전 화면에서 다시 시도해 주세요.' });
+      setError({ code: 'INVALID_PARAMS', message: 'Analysis information not found. Please go back and try again.' });
       setPhase('error');
       return;
     }
@@ -216,7 +216,7 @@ export default function ProductRecommendationScreen({ route, navigation }) {
           <>
             <ActivityIndicator size="large" color="#2563eb" />
             <Text style={styles.centerText}>
-              {phase === 'session' ? '분석 세션을 준비하고 있어요...' : '맞춤 상품을 불러오는 중...'}
+              {phase === 'session' ? 'Preparing the analysis session...' : 'Loading personalized products...'}
             </Text>
           </>,
         )}
@@ -230,7 +230,7 @@ export default function ProductRecommendationScreen({ route, navigation }) {
         {renderCenter(
           <>
             <ActivityIndicator size="large" color="#2563eb" />
-            <Text style={styles.centerText}>분석 결과를 준비 중이에요. 잠시만 기다려 주세요...</Text>
+            <Text style={styles.centerText}>Preparing your analysis results. Please wait a moment...</Text>
           </>,
         )}
       </View>
@@ -242,12 +242,12 @@ export default function ProductRecommendationScreen({ route, navigation }) {
       <View style={styles.container}>
         {renderCenter(
           <>
-            <Text style={styles.centerTitle}>분석 준비 중</Text>
+            <Text style={styles.centerTitle}>Preparing analysis</Text>
             <Text style={styles.centerText}>
-              분석 결과가 아직 준비되지 않았어요. 잠시 후 다시 시도해 주세요.
+              Your analysis results are not ready yet. Please try again in a moment.
             </Text>
             <TouchableOpacity style={styles.primaryButton} onPress={onRetry}>
-              <Text style={styles.primaryButtonText}>다시 시도</Text>
+              <Text style={styles.primaryButtonText}>Try again</Text>
             </TouchableOpacity>
           </>,
         )}
@@ -260,10 +260,10 @@ export default function ProductRecommendationScreen({ route, navigation }) {
       <View style={styles.container}>
         {renderCenter(
           <>
-            <Text style={styles.centerTitle}>불러오지 못했어요</Text>
-            <Text style={styles.centerText}>{(error && error.message) || '문제가 발생했어요.'}</Text>
+            <Text style={styles.centerTitle}>We couldn't load this</Text>
+            <Text style={styles.centerText}>{(error && error.message) || 'Something went wrong.'}</Text>
             <TouchableOpacity style={styles.primaryButton} onPress={onRetry}>
-              <Text style={styles.primaryButtonText}>다시 시도</Text>
+              <Text style={styles.primaryButtonText}>Try again</Text>
             </TouchableOpacity>
           </>,
         )}
@@ -275,7 +275,7 @@ export default function ProductRecommendationScreen({ route, navigation }) {
     return (
       <View style={styles.container}>
         {renderCenter(
-          <Text style={styles.centerText}>지금은 추천할 상품이 없어요.</Text>,
+          <Text style={styles.centerText}>There are no products to recommend right now.</Text>,
         )}
       </View>
     );
@@ -286,9 +286,9 @@ export default function ProductRecommendationScreen({ route, navigation }) {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.title}>맞춤 구강관리 상품</Text>
+        <Text style={styles.title}>Personalized oral care products</Text>
         <Text style={styles.subtitle}>
-          필요한 상품을 선택해 주세요. 가격은 장바구니를 만든 뒤 확인할 수 있어요.
+          Select the products you need. Prices are available after you create a cart.
         </Text>
 
         {items.map((item) => {
@@ -310,7 +310,7 @@ export default function ProductRecommendationScreen({ route, navigation }) {
               />
               <View style={styles.cardBody}>
                 <Text style={styles.cardTitle}>{item.display_name}</Text>
-                <Text style={styles.cardQty}>수량 {item.quantity}</Text>
+                <Text style={styles.cardQty}>Qty {item.quantity}</Text>
                 {!!item.rationale && <Text style={styles.cardRationale}>{item.rationale}</Text>}
                 {!!label && (
                   <View style={styles.badge}>
@@ -330,7 +330,7 @@ export default function ProductRecommendationScreen({ route, navigation }) {
           disabled={selectedCount === 0}
         >
           <Text style={styles.primaryButtonText}>
-            장바구니 검토{selectedCount > 0 ? ` (${selectedCount})` : ''}
+            Review cart{selectedCount > 0 ? ` (${selectedCount})` : ''}
           </Text>
         </TouchableOpacity>
       </View>

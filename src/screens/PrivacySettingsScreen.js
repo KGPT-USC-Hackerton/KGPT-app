@@ -45,15 +45,15 @@ export default function PrivacySettingsScreen({ navigation }) {
 
   const handleDeleteAccount = () => {
     Alert.alert(
-      '계정 삭제',
-      '정말 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.',
+      'Delete account',
+      'Are you sure you want to delete your account? This action cannot be undone.',
       [
-        { text: '취소', style: 'cancel' },
+        { text: 'Cancel', style: 'cancel' },
         {
-          text: '삭제',
+          text: 'Delete',
           style: 'destructive',
           onPress: () => {
-            Alert.alert('알림', '계정 삭제 기능은 준비 중입니다.');
+            Alert.alert('Notice', 'Account deletion is coming soon.');
           },
         },
       ]
@@ -61,7 +61,7 @@ export default function PrivacySettingsScreen({ navigation }) {
   };
 
   const handleDownloadData = () => {
-    Alert.alert('알림', '데이터 다운로드 기능은 준비 중입니다.');
+    Alert.alert('Notice', 'Data download is coming soon.');
   };
 
   if (loading) {
@@ -74,7 +74,7 @@ export default function PrivacySettingsScreen({ navigation }) {
           >
             <Text style={styles.backButtonText}>←</Text>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>개인정보 보호</Text>
+          <Text style={styles.headerTitle}>Privacy</Text>
           <View style={styles.placeholder} />
         </View>
         <View style={styles.loadingContainer}>
@@ -93,13 +93,13 @@ export default function PrivacySettingsScreen({ navigation }) {
         >
           <Text style={styles.backButtonText}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>개인정보 보호</Text>
+        <Text style={styles.headerTitle}>Privacy</Text>
         <View style={styles.placeholder} />
       </View>
 
       <ScrollView style={styles.content}>
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>데이터 관리</Text>
+          <Text style={styles.sectionTitle}>Data Management</Text>
           <View style={styles.settingsCard}>
             <TouchableOpacity
               style={styles.settingItem}
@@ -108,9 +108,9 @@ export default function PrivacySettingsScreen({ navigation }) {
               <View style={styles.settingLeft}>
                 <Text style={styles.settingIcon}>📥</Text>
                 <View style={styles.settingTextContainer}>
-                  <Text style={styles.settingText}>내 데이터 다운로드</Text>
+                  <Text style={styles.settingText}>Download my data</Text>
                   <Text style={styles.settingDescription}>
-                    저장된 모든 데이터를 다운로드합니다
+                    Download all of your stored data
                   </Text>
                 </View>
               </View>
@@ -124,9 +124,9 @@ export default function PrivacySettingsScreen({ navigation }) {
               <View style={styles.settingLeft}>
                 <Text style={styles.settingIcon}>📄</Text>
                 <View style={styles.settingTextContainer}>
-                  <Text style={styles.settingText}>개인정보처리방침</Text>
+                  <Text style={styles.settingText}>Privacy Policy</Text>
                   <Text style={styles.settingDescription}>
-                    개인정보 처리 방침을 확인하세요
+                    Review our Privacy Policy
                   </Text>
                 </View>
               </View>
@@ -136,21 +136,21 @@ export default function PrivacySettingsScreen({ navigation }) {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>권한 설정</Text>
+          <Text style={styles.sectionTitle}>Permissions</Text>
           <View style={styles.settingsCard}>
             <View style={styles.settingItem}>
               <View style={styles.settingLeft}>
                 <Text style={styles.settingIcon}>📊</Text>
                 <View style={styles.settingTextContainer}>
-                  <Text style={styles.settingText}>익명화된 분석 데이터</Text>
+                  <Text style={styles.settingText}>Anonymized analytics data</Text>
                   <Text style={styles.settingDescription}>
-                    서비스 개선을 위한 익명 데이터 수집
+                    Collect anonymous data to improve the service
                   </Text>
                 </View>
               </View>
               <View style={styles.toggleContainer}>
                 <Text style={styles.toggleText}>
-                  {privacySettings.analytics ? '활성화' : '비활성화'}
+                  {privacySettings.analytics ? 'On' : 'Off'}
                 </Text>
               </View>
             </View>
@@ -159,15 +159,15 @@ export default function PrivacySettingsScreen({ navigation }) {
               <View style={styles.settingLeft}>
                 <Text style={styles.settingIcon}>🤝</Text>
                 <View style={styles.settingTextContainer}>
-                  <Text style={styles.settingText}>데이터 공유</Text>
+                  <Text style={styles.settingText}>Data sharing</Text>
                   <Text style={styles.settingDescription}>
-                    제3자와의 데이터 공유
+                    Share data with third parties
                   </Text>
                 </View>
               </View>
               <View style={styles.toggleContainer}>
                 <Text style={styles.toggleText}>
-                  {privacySettings.dataSharing ? '활성화' : '비활성화'}
+                  {privacySettings.dataSharing ? 'On' : 'Off'}
                 </Text>
               </View>
             </View>
@@ -176,15 +176,15 @@ export default function PrivacySettingsScreen({ navigation }) {
               <View style={styles.settingLeft}>
                 <Text style={styles.settingIcon}>📢</Text>
                 <View style={styles.settingTextContainer}>
-                  <Text style={styles.settingText}>마케팅 수신 동의</Text>
+                  <Text style={styles.settingText}>Marketing communications</Text>
                   <Text style={styles.settingDescription}>
-                    프로모션 및 이벤트 정보 수신
+                    Receive promotions and event updates
                   </Text>
                 </View>
               </View>
               <View style={styles.toggleContainer}>
                 <Text style={styles.toggleText}>
-                  {privacySettings.marketing ? '활성화' : '비활성화'}
+                  {privacySettings.marketing ? 'On' : 'Off'}
                 </Text>
               </View>
             </View>
@@ -192,7 +192,7 @@ export default function PrivacySettingsScreen({ navigation }) {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>계정 관리</Text>
+          <Text style={styles.sectionTitle}>Account Management</Text>
           <View style={styles.settingsCard}>
             <TouchableOpacity
               style={[styles.settingItem, styles.dangerItem]}
@@ -202,10 +202,10 @@ export default function PrivacySettingsScreen({ navigation }) {
                 <Text style={styles.settingIcon}>🗑️</Text>
                 <View style={styles.settingTextContainer}>
                   <Text style={[styles.settingText, styles.dangerText]}>
-                    계정 삭제
+                    Delete account
                   </Text>
                   <Text style={styles.settingDescription}>
-                    계정과 모든 데이터를 영구적으로 삭제합니다
+                    Permanently delete your account and all data
                   </Text>
                 </View>
               </View>

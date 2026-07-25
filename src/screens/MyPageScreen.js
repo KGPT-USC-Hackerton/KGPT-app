@@ -37,15 +37,15 @@ export default function MyPageScreen({ navigation, onLogout }) {
 
   const handleLogout = () => {
     Alert.alert(
-      '로그아웃',
-      '정말 로그아웃하시겠습니까?',
+      'Log out',
+      'Are you sure you want to log out?',
       [
         {
-          text: '취소',
+          text: 'Cancel',
           style: 'cancel',
         },
         {
-          text: '로그아웃',
+          text: 'Log out',
           style: 'destructive',
           onPress: async () => {
             try {
@@ -55,7 +55,7 @@ export default function MyPageScreen({ navigation, onLogout }) {
               }
             } catch (error) {
               console.error('로그아웃 오류:', error);
-              Alert.alert('오류', '로그아웃 중 오류가 발생했습니다.');
+              Alert.alert('Error', 'An error occurred while logging out.');
             }
           },
         },
@@ -71,9 +71,9 @@ export default function MyPageScreen({ navigation, onLogout }) {
             <Icon name="person" size={32} color="#ffffff" />
           </View>
           <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>{user?.name || '사용자'}</Text>
+            <Text style={styles.profileName}>{user?.name || 'User'}</Text>
             <Text style={styles.profileEmail}>{user?.email || user?.username || ''}</Text>
-            <Text style={styles.profileMembership}>일반 회원</Text>
+            <Text style={styles.profileMembership}>Regular member</Text>
           </View>
           <TouchableOpacity style={styles.editButton} onPress={handleEditProfile}>
             <Icon name="edit" size={20} color="#9ca3af" />
@@ -83,7 +83,7 @@ export default function MyPageScreen({ navigation, onLogout }) {
 
       {/* 설정 메뉴 */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>설정</Text>
+        <Text style={styles.sectionTitle}>Settings</Text>
         <View style={styles.settingsCard}>
           {/* 알림 설정 */}
           <TouchableOpacity
@@ -94,7 +94,7 @@ export default function MyPageScreen({ navigation, onLogout }) {
               <View style={[styles.settingIcon, styles.blueBackground]}>
                 <Icon name="notifications" size={16} color="#1e40af" />
               </View>
-              <Text style={styles.settingText}>알림 설정</Text>
+              <Text style={styles.settingText}>Notification settings</Text>
             </View>
             <Icon name="chevron-right" size={20} color="#9ca3af" />
           </TouchableOpacity>
@@ -110,7 +110,7 @@ export default function MyPageScreen({ navigation, onLogout }) {
               <View style={[styles.settingIcon, styles.greenBackground]}>
                 <Icon name="security" size={16} color="#16a34a" />
               </View>
-              <Text style={styles.settingText}>개인정보 보호</Text>
+              <Text style={styles.settingText}>Privacy</Text>
             </View>
             <Icon name="chevron-right" size={20} color="#9ca3af" />
           </TouchableOpacity>
@@ -126,7 +126,7 @@ export default function MyPageScreen({ navigation, onLogout }) {
               <View style={[styles.settingIcon, styles.purpleBackground]}>
                 <Icon name="settings" size={16} color="#7c3aed" />
               </View>
-              <Text style={styles.settingText}>앱 설정</Text>
+              <Text style={styles.settingText}>App settings</Text>
             </View>
             <Icon name="chevron-right" size={20} color="#9ca3af" />
           </TouchableOpacity>
@@ -142,7 +142,7 @@ export default function MyPageScreen({ navigation, onLogout }) {
               <View style={[styles.settingIcon, styles.yellowBackground]}>
                 <Icon name="help-outline" size={16} color="#d97706" />
               </View>
-              <Text style={styles.settingText}>도움말</Text>
+              <Text style={styles.settingText}>Help</Text>
             </View>
             <Icon name="chevron-right" size={20} color="#9ca3af" />
           </TouchableOpacity>
@@ -154,15 +154,15 @@ export default function MyPageScreen({ navigation, onLogout }) {
         <View style={styles.subscriptionCard}>
           <View style={styles.subscriptionContent}>
             <View style={styles.subscriptionInfo}>
-              <Text style={styles.subscriptionTitle}>프리미엄 플랜</Text>
-              <Text style={styles.subscriptionDescription}>AI 분석 무제한 + 전문가 상담</Text>
-              <Text style={styles.subscriptionExpiry}>2025.12.23까지</Text>
+              <Text style={styles.subscriptionTitle}>Premium plan</Text>
+              <Text style={styles.subscriptionDescription}>Unlimited AI analysis + expert consultation</Text>
+              <Text style={styles.subscriptionExpiry}>Until 12/23/2025</Text>
             </View>
             <TouchableOpacity
               style={styles.manageButton}
               onPress={() => navigation?.navigate('Subscription')}
             >
-              <Text style={styles.manageButtonText}>관리</Text>
+              <Text style={styles.manageButtonText}>Manage</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -172,7 +172,7 @@ export default function MyPageScreen({ navigation, onLogout }) {
       <View style={styles.section}>
         <View style={styles.appInfoCard}>
           <View style={styles.appInfoItem}>
-            <Text style={styles.appInfoLabel}>앱 버전</Text>
+            <Text style={styles.appInfoLabel}>App version</Text>
             <Text style={styles.appInfoValue}>1.2.3</Text>
           </View>
           <View style={styles.divider} />
@@ -180,7 +180,7 @@ export default function MyPageScreen({ navigation, onLogout }) {
             style={styles.appInfoItem}
             onPress={() => navigation?.navigate('TermsOfService')}
           >
-            <Text style={styles.appInfoLabel}>서비스 약관</Text>
+            <Text style={styles.appInfoLabel}>Terms of Service</Text>
             <Icon name="chevron-right" size={20} color="#9ca3af" />
           </TouchableOpacity>
           <View style={styles.divider} />
@@ -188,7 +188,7 @@ export default function MyPageScreen({ navigation, onLogout }) {
             style={styles.appInfoItem}
             onPress={() => navigation?.navigate('PrivacyPolicy')}
           >
-            <Text style={styles.appInfoLabel}>개인정보처리방침</Text>
+            <Text style={styles.appInfoLabel}>Privacy Policy</Text>
             <Icon name="chevron-right" size={20} color="#9ca3af" />
           </TouchableOpacity>
         </View>
@@ -198,7 +198,7 @@ export default function MyPageScreen({ navigation, onLogout }) {
       <View style={styles.section}>
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Icon name="logout" size={18} color="#dc2626" style={styles.logoutIcon} />
-          <Text style={styles.logoutButtonText}>로그아웃</Text>
+          <Text style={styles.logoutButtonText}>Log out</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

@@ -64,7 +64,7 @@ export const login = async (username, password) => {
 export const logout = async () => {
   try {
     await clearAuthData();
-    return { success: true, message: '로그아웃되었습니다.' };
+    return { success: true, message: 'You have been logged out.' };
   } catch (error) {
     console.error('로그아웃 오류:', error);
     throw error;

@@ -20,7 +20,7 @@ const LoginScreen = ({ onLogin, onNavigateToSignUp }) => {
 
   const handleLogin = async () => {
   if (!username.trim() || !password.trim()) {
-    Alert.alert('오류', '아이디와 비밀번호를 입력해주세요.');
+    Alert.alert('Error', 'Please enter your username and password.');
     return;
   }
 
@@ -35,7 +35,7 @@ const LoginScreen = ({ onLogin, onNavigateToSignUp }) => {
       const user = response.data?.user;
 
       if (!user) {
-        throw new Error("로그인 응답에 user 정보가 없습니다.");
+        throw new Error("User information is missing from the login response.");
       }
 
       // ✅ 1) user_id를 AsyncStorage에 저장
@@ -49,19 +49,19 @@ const LoginScreen = ({ onLogin, onNavigateToSignUp }) => {
   } catch (error) {
     console.log('❌ login error:', error);
 
-    let errorMessage = '로그인 중 오류가 발생했습니다.';
+    let errorMessage = 'An error occurred while logging in.';
 
     if (error.status === 401) {
-      errorMessage = error.message || '아이디 또는 비밀번호가 일치하지 않습니다.';
+      errorMessage = error.message || 'Username or password does not match.';
     } else if (error.status === 400) {
-      errorMessage = error.message || '아이디와 비밀번호를 입력해주세요.';
+      errorMessage = error.message || 'Please enter your username and password.';
     } else if (error.status === 0) {
-      errorMessage = error.message || '네트워크 연결을 확인해주세요.';
+      errorMessage = error.message || 'Please check your network connection.';
     } else if (error.message) {
       errorMessage = error.message;
     }
 
-    Alert.alert('오류', errorMessage);
+    Alert.alert('Error', errorMessage);
   } finally {
     setLoading(false);
   }
@@ -70,10 +70,10 @@ const LoginScreen = ({ onLogin, onNavigateToSignUp }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>로그인</Text>
+        <Text style={styles.title}>Log in</Text>
         <TextInput
           style={styles.input}
-          placeholder="아이디"
+          placeholder="Username"
           value={username}
           onChangeText={setUsername}
           autoCapitalize="none"
@@ -82,7 +82,7 @@ const LoginScreen = ({ onLogin, onNavigateToSignUp }) => {
         />
         <TextInput
           style={styles.input}
-          placeholder="비밀번호"
+          placeholder="Password"
           value={password}
           onChangeText={setPassword}
           autoCapitalize="none"
@@ -100,7 +100,7 @@ const LoginScreen = ({ onLogin, onNavigateToSignUp }) => {
           {loading ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text style={styles.buttonText}>로그인</Text>
+            <Text style={styles.buttonText}>Log in</Text>
           )}
         </TouchableOpacity>
         
@@ -109,7 +109,7 @@ const LoginScreen = ({ onLogin, onNavigateToSignUp }) => {
           onPress={onNavigateToSignUp}
           disabled={loading}
         >
-          <Text style={styles.linkText}>계정이 없으신가요? 회원가입</Text>
+          <Text style={styles.linkText}>Don't have an account? Sign up</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

@@ -32,9 +32,9 @@ try {
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const POSITION_LABELS = {
-  upper: '윗니',
-  lower: '아랫니',
-  front: '앞니',
+  upper: 'Upper teeth',
+  lower: 'Lower teeth',
+  front: 'Front teeth',
 };
 
 // ✅ 실제 이미지 크기 가져오기 (ImageManipulator가 사용하는 원본 기준)
@@ -75,9 +75,9 @@ export default function CameraGuideComponent({ position, onCapture, onClose }) {
       const granted = await requestPermission();
       if (!granted) {
         Alert.alert(
-          '카메라 권한 필요',
-          '구강 사진 촬영을 위해 카메라 권한이 필요합니다.',
-          [{ text: '확인', onPress: onClose }],
+          'Camera permission required',
+          'Camera access is required to take oral photos.',
+          [{ text: 'OK', onPress: onClose }],
         );
       }
     }
@@ -618,7 +618,7 @@ export default function CameraGuideComponent({ position, onCapture, onClose }) {
       onCapture(asset);
     } catch (error) {
       console.error('❌ 촬영 오류:', error);
-      Alert.alert('오류', '사진 촬영에 실패했습니다. 다시 시도해주세요.');
+      Alert.alert('Error', 'Failed to take the photo. Please try again.');
     } finally {
       setIsCapturing(false);
     }
@@ -669,12 +669,12 @@ export default function CameraGuideComponent({ position, onCapture, onClose }) {
     return (
       <View style={styles.container}>
         <View style={styles.permissionContainer}>
-          <Text style={styles.permissionText}>카메라 권한이 필요합니다</Text>
+          <Text style={styles.permissionText}>Camera permission required</Text>
           <TouchableOpacity
             style={styles.permissionButton}
             onPress={checkPermission}
           >
-            <Text style={styles.permissionButtonText}>권한 요청</Text>
+            <Text style={styles.permissionButtonText}>Request permission</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -685,7 +685,7 @@ export default function CameraGuideComponent({ position, onCapture, onClose }) {
     return (
       <View style={styles.container}>
         <View style={styles.permissionContainer}>
-          <Text style={styles.permissionText}>카메라를 찾을 수 없습니다</Text>
+          <Text style={styles.permissionText}>Camera not found</Text>
         </View>
       </View>
     );
@@ -736,9 +736,9 @@ export default function CameraGuideComponent({ position, onCapture, onClose }) {
       >
         <View style={styles.bottomHeader}>
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>{POSITION_LABELS[position]} 촬영</Text>
+            <Text style={styles.title}>{POSITION_LABELS[position]} photo</Text>
             <Text style={styles.subtitle}>
-              가이드라인에 맞춰 입을 맞춰주세요
+              Line up your mouth with the guide
             </Text>
           </View>
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
@@ -780,7 +780,7 @@ export default function CameraGuideComponent({ position, onCapture, onClose }) {
             ) : (
               <View style={styles.loadingIndicator}>
                 <ActivityIndicator size="small" color="white" />
-                <Text style={styles.loadingText}>준비 중...</Text>
+                <Text style={styles.loadingText}>Preparing...</Text>
               </View>
             )}
           </View>
@@ -906,7 +906,7 @@ function MouthGuide({ position, verticalPosition = 'center', flipAnimation }) {
                 },
               ]}
             >
-              윗니를 가이드라인에 맞춰주세요
+              Align your upper teeth with the guide
             </Animated.Text>
           </>
         )}
@@ -929,7 +929,7 @@ function MouthGuide({ position, verticalPosition = 'center', flipAnimation }) {
                 },
               ]}
             >
-              아랫니를 가이드라인에 맞춰주세요
+              Align your lower teeth with the guide
             </Animated.Text>
           </>
         )}
@@ -952,7 +952,7 @@ function MouthGuide({ position, verticalPosition = 'center', flipAnimation }) {
                 },
               ]}
             >
-              앞니를 가이드라인에 맞춰주세요
+              Align your front teeth with the guide
             </Animated.Text>
           </>
         )}

@@ -34,7 +34,7 @@ export const apiRequest = async (endpoint, options = {}) => {
     if (!response.ok) {
       throw {
         status: response.status,
-        message: data.message || '요청 처리 중 오류가 발생했습니다.',
+        message: data.message || 'An error occurred while processing the request.',
         data: data,
       };
     }
@@ -45,7 +45,7 @@ export const apiRequest = async (endpoint, options = {}) => {
     if (error.message === 'Network request failed') {
       throw {
         status: 0,
-        message: '네트워크 연결을 확인해주세요.',
+        message: 'Please check your network connection.',
         data: null,
       };
     }
@@ -128,7 +128,7 @@ export const uploadFormData = async (endpoint, formData, options = {}) => {
       if (!response.ok) {
         throw {
           status: response.status,
-          message: data.message || '업로드 중 오류가 발생했습니다.',
+          message: data.message || 'An error occurred during upload.',
           data: data,
         };
       }
@@ -141,7 +141,7 @@ export const uploadFormData = async (endpoint, formData, options = {}) => {
       if (error.name === 'AbortError' || error.message?.includes('timeout') || error.message?.includes('ETIMEDOUT')) {
         throw {
           status: 408,
-          message: '업로드 시간이 초과되었습니다. 네트워크 연결을 확인해주세요.',
+          message: 'The upload timed out. Please check your network connection.',
           data: null,
           error: error.message || 'Request timeout',
         };
@@ -151,7 +151,7 @@ export const uploadFormData = async (endpoint, formData, options = {}) => {
       if (error.message === 'Network request failed' || error.message?.includes('Network')) {
         throw {
           status: 0,
-          message: '네트워크 연결을 확인해주세요.',
+          message: 'Please check your network connection.',
           data: null,
           error: error.message,
         };

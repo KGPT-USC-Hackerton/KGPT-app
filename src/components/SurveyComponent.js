@@ -70,7 +70,7 @@ export default function SurveyComponent({
         const json = await res.json();
 
         if (!res.ok || !json.success) {
-          throw new Error(json.message || '설문을 시작할 수 없습니다.');
+          throw new Error(json.message || 'Unable to start the survey.');
         }
 
         const { session_id, current_question, options, progress } = json.data;
@@ -116,7 +116,7 @@ export default function SurveyComponent({
   }, [currentQuestionNumber, totalQuestions]);
 
   // 현재 문항 카테고리 (옵션의 category 기준)
-  const currentCategory = options[0]?.category || '구강 설문';
+  const currentCategory = options[0]?.category || 'Oral care survey';
 
   /**
    * ===== 2) 다음 문항 로딩: GET /questions/:questionNumber =====
@@ -137,7 +137,7 @@ export default function SurveyComponent({
       const json = await res.json();
 
       if (!res.ok || !json.success) {
-        throw new Error(json.message || '다음 문항을 불러올 수 없습니다.');
+        throw new Error(json.message || 'Unable to load the next question.');
       }
 
       const { question, options } = json.data;
@@ -167,7 +167,7 @@ export default function SurveyComponent({
    */
   const submitSurveyOnce = async (safeUserId, allAnswers) => {
     if (!sessionId) {
-      throw new Error('설문 세션 정보가 없습니다.');
+      throw new Error('No survey session information.');
     }
 
     const payload = {
@@ -191,7 +191,7 @@ export default function SurveyComponent({
     console.log('POST /submit 응답:', json);
 
     if (!res.ok || !json.success) {
-      throw new Error(json.message || '설문 제출/점수 계산에 실패했습니다.');
+      throw new Error(json.message || 'Failed to submit the survey or calculate the score.');
     }
 
     setIsCompleted(true);
@@ -216,7 +216,7 @@ export default function SurveyComponent({
     });
 
     if (!currentQuestion || !options.length) {
-      setError('현재 문항 정보를 찾을 수 없습니다.');
+      setError('Could not find the current question.');
       return;
     }
 
@@ -232,7 +232,7 @@ export default function SurveyComponent({
     );
 
     if (!selectedOption) {
-      setError('선택한 응답을 찾을 수 없습니다.');
+      setError('Could not find the selected answer.');
       return;
     }
 
@@ -264,7 +264,7 @@ export default function SurveyComponent({
       // 다음 문항 가져오기
       const next = await fetchQuestionIfNeeded(nextQuestionNumber);
       if (!next) {
-        throw new Error('다음 문항을 불러오지 못했습니다.');
+        throw new Error('Failed to load the next question.');
       }
 
       setCurrentQuestion(next.question);
@@ -318,7 +318,7 @@ export default function SurveyComponent({
       <View style={styles.container}>
         <View style={styles.card}>
           <ActivityIndicator size="large" />
-          <Text style={{ marginTop: 12 }}>설문을 불러오는 중입니다...</Text>
+          <Text style={{ marginTop: 12 }}>Loading the survey...</Text>
         </View>
       </View>
     );
@@ -329,7 +329,7 @@ export default function SurveyComponent({
       <View style={styles.container}>
         <View style={styles.card}>
           <Text style={{ color: 'red', marginBottom: 8 }}>
-            설문을 불러오지 못했습니다.
+            Failed to load the survey.
           </Text>
           <Text>{error}</Text>
         </View>
@@ -341,7 +341,7 @@ export default function SurveyComponent({
     return (
       <View style={styles.container}>
         <View style={styles.card}>
-          <Text>표시할 설문 문항이 없습니다.</Text>
+          <Text>There are no survey questions to show.</Text>
         </View>
       </View>
     );
@@ -393,7 +393,7 @@ export default function SurveyComponent({
 
             {/* 문항 최대 점수 안내 */}
             <Text style={styles.questionSub}>
-              (문항 최대 {currentQuestion.max_score}점)
+              (Max {currentQuestion.max_score} points for this question)
             </Text>
           </View>
 
@@ -422,7 +422,7 @@ export default function SurveyComponent({
               <View style={{ marginTop: 12, alignItems: 'center' }}>
                 <ActivityIndicator />
                 <Text style={{ marginTop: 4, fontSize: 12, color: '#6b7280' }}>
-                  응답을 처리 중입니다...
+                  Processing your answer...
                 </Text>
               </View>
             )}
@@ -432,7 +432,7 @@ export default function SurveyComponent({
               <View style={{ marginTop: 12, alignItems: 'center' }}>
                 <ActivityIndicator />
                 <Text style={{ marginTop: 4, fontSize: 12, color: '#6b7280' }}>
-                  설문 결과를 분석 중입니다...
+                  Analyzing your survey results...
                 </Text>
               </View>
             )}
@@ -447,7 +447,7 @@ export default function SurveyComponent({
             {/* 설문 자체 완료 메시지 */}
             {isCompleted && !isProcessing && (
               <Text style={{ marginTop: 8, color: '#10b981', fontSize: 13 }}>
-                설문이 완료되었습니다. 결과를 분석했습니다.
+                Survey complete. Your results have been analyzed.
               </Text>
             )}
           </View>
@@ -460,7 +460,7 @@ export default function SurveyComponent({
             disabled={isPrevDisabled}
             style={[styles.navBtn, isPrevDisabled && styles.navBtnDisabled]}
           >
-            <Text style={styles.navBtnText}>이전</Text>
+            <Text style={styles.navBtnText}>Previous</Text>
           </TouchableOpacity>
         </View>
       </View>

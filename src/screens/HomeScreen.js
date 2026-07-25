@@ -134,12 +134,12 @@ export default function HomeScreen() {
         setTipText(response.tip);
       } else {
         // 기본 팁 표시
-        setTipText('칫솔질 후 30분 이내에는 음식을 섭취하지 않는 것이 좋습니다. 불소가 치아에 완전히 흡수될 시간을 주세요.');
+        setTipText('It is best not to eat within 30 minutes after brushing. Give the fluoride time to be fully absorbed into your teeth.');
       }
     } catch (error) {
       console.log('오늘의 팁 로드 오류:', error);
       // 에러 시 기본 팁 표시
-      setTipText('칫솔질 후 30분 이내에는 음식을 섭취하지 않는 것이 좋습니다. 불소가 치아에 완전히 흡수될 시간을 주세요.');
+      setTipText('It is best not to eat within 30 minutes after brushing. Give the fluoride time to be fully absorbed into your teeth.');
     } finally {
       setTipLoading(false);
     }
@@ -151,7 +151,7 @@ export default function HomeScreen() {
     const year = today.getFullYear();
     const month = today.getMonth() + 1;
     const day = today.getDate();
-    return `${year}년 ${month}월 ${day}일`;
+    return `${month}/${day}/${year}`;
   };
 
   return (
@@ -159,9 +159,9 @@ export default function HomeScreen() {
       {/* 인사말과 오늘 날짜 */}
       <View style={styles.greeting}>
         <Text style={styles.greetingTitle}>
-          {userName ? `${userName}님 안녕하세요! 👋` : '안녕하세요! 👋'}
+          {userName ? `Hello, ${userName}! 👋` : 'Hello! 👋'}
         </Text>
-        <Text style={styles.greetingSubtext}>오늘도 건강한 구강관리를 시작해보세요</Text>
+        <Text style={styles.greetingSubtext}>Start your healthy oral care today</Text>
         <Text style={styles.dateText}>{getTodayDate()}</Text>
       </View>
 
@@ -169,7 +169,7 @@ export default function HomeScreen() {
       <View style={styles.healthCard}>
         <View style={styles.healthCardContent}>
           <View style={styles.healthInfo}>
-            <Text style={styles.healthTitle}>구강 건강 점수</Text>
+            <Text style={styles.healthTitle}>Oral health score</Text>
             <View style={styles.scoreContainer}>
               <Text style={styles.scoreText}>{currentScore !== null ? currentScore : '-'}</Text>
               {currentScore !== null && <Text style={styles.scoreMax}>/ 100</Text>}
@@ -188,7 +188,7 @@ export default function HomeScreen() {
 
       {/* 점수 추이 그래프 */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>구강 점수 그래프</Text>
+        <Text style={styles.sectionTitle}>Oral score graph</Text>
         <View style={styles.chartCard}>
           {loading ? (
             <View style={styles.chartLoading}>
@@ -214,7 +214,7 @@ export default function HomeScreen() {
           )}
           {(!loading && (!chartData || chartData.length === 0)) && (
             <View style={styles.emptyChartMessage}>
-              <Text style={styles.emptyChartText}>아직 기록된 점수가 없습니다</Text>
+              <Text style={styles.emptyChartText}>No scores recorded yet</Text>
             </View>
           )}
         </View>
@@ -227,7 +227,7 @@ export default function HomeScreen() {
             <Icon name="emoji-events" size={16} color="#ffffff" />
           </View>
           <View style={styles.tipTextContainer}>
-            <Text style={styles.tipTitle}>오늘의 팁</Text>
+            <Text style={styles.tipTitle}>Today's tip</Text>
             {tipLoading ? (
               <View style={styles.tipLoading}>
                 <ActivityIndicator size="small" color="#9ca3af" />

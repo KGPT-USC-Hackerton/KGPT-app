@@ -3,9 +3,9 @@ import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 
 export const TABS = [
-  { key: 'BrushingGuide',   label: '칫솔질 가이드' },
-  { key: 'HygieneProducts', label: '구강 위생용품' },
-  { key: 'KnowledgeClips',  label: '치아 상식 클립' },
+  { key: 'BrushingGuide',   label: 'Brushing Guide' },
+  { key: 'HygieneProducts', label: 'Hygiene Products' },
+  { key: 'KnowledgeClips',  label: 'Dental Tips' },
 ];
 
 export default function TopTabsChips({ active, onChange = () => {} }) {

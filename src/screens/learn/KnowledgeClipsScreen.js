@@ -3,10 +3,10 @@ import { View, Text, StyleSheet, FlatList } from 'react-native';
 import Video from 'react-native-video';
 
 const DATA = [
-  { id: '1', title: '입속 세균과 질병의 관계', url: 'https://res.cloudinary.com/dqutwk5xo/video/upload/v1762187462/%EC%98%81%EC%83%811_ocbplz.mp4' },
-  { id: '2', title: '노인에게 발생되는 구강건조증 예방을 위한 침샘 마사지',               url: 'https://res.cloudinary.com/dqutwk5xo/video/upload/v1762187832/%EC%98%81%EC%83%812_lzituo.mp4' },
-  { id: '3', title: '올바른 칫솔질 방법',             url: 'https://res.cloudinary.com/dqutwk5xo/video/upload/v1762187854/%EC%98%81%EC%83%814_kz9fwg.mp4' },
-  { id: '4', title: '칫솔 선택 및 보관법',               url: 'https://res.cloudinary.com/dqutwk5xo/video/upload/v1762187843/%EC%98%81%EC%83%813_wxbu5t.mp4' },
+  { id: '1', title: 'How oral bacteria relate to disease', url: 'https://res.cloudinary.com/dqutwk5xo/video/upload/v1762187462/%EC%98%81%EC%83%811_ocbplz.mp4' },
+  { id: '2', title: 'Salivary gland massage to prevent dry mouth in older adults',               url: 'https://res.cloudinary.com/dqutwk5xo/video/upload/v1762187832/%EC%98%81%EC%83%812_lzituo.mp4' },
+  { id: '3', title: 'The right way to brush your teeth',             url: 'https://res.cloudinary.com/dqutwk5xo/video/upload/v1762187854/%EC%98%81%EC%83%814_kz9fwg.mp4' },
+  { id: '4', title: 'Choosing and storing your toothbrush',               url: 'https://res.cloudinary.com/dqutwk5xo/video/upload/v1762187843/%EC%98%81%EC%83%813_wxbu5t.mp4' },
 ];
 
 function ClipCard({ title, url, playing, isVertical }) {

@@ -14,28 +14,28 @@ export default function HelpScreen({ navigation }) {
   const faqItems = [
     {
       id: 1,
-      question: 'AI 분석은 어떻게 사용하나요?',
-      answer: '홈 화면에서 사진을 촬영하거나 갤러리에서 선택하면 자동으로 AI 분석이 시작됩니다. 분석 결과는 즉시 확인할 수 있습니다.',
+      question: 'How do I use AI analysis?',
+      answer: 'Take a photo on the home screen or pick one from your gallery, and AI analysis starts automatically. You can view the results right away.',
     },
     {
       id: 2,
-      question: '예약은 어떻게 하나요?',
-      answer: '예약 화면에서 원하는 치과를 선택하고 날짜와 시간을 선택하면 예약이 완료됩니다. 예약 전 사전 자가진단 설문을 작성하시면 더 정확한 진단에 도움이 됩니다.',
+      question: 'How do I book an appointment?',
+      answer: 'On the appointment screen, choose the dental clinic you want and select a date and time to complete your booking. Filling out the pre-visit self-assessment survey beforehand helps with a more accurate diagnosis.',
     },
     {
       id: 3,
-      question: '프리미엄 플랜의 혜택은 무엇인가요?',
-      answer: '프리미엄 플랜을 이용하시면 AI 분석을 무제한으로 사용할 수 있고, 전문가 상담 서비스와 상세한 통계 리포트를 받으실 수 있습니다.',
+      question: 'What are the benefits of the Premium plan?',
+      answer: 'With the Premium plan, you get unlimited AI analysis, expert consultation services, and detailed statistics reports.',
     },
     {
       id: 4,
-      question: '데이터는 안전하게 보관되나요?',
-      answer: '네, 모든 개인정보와 건강 데이터는 암호화되어 안전하게 보관됩니다. 개인정보처리방침에서 자세한 내용을 확인하실 수 있습니다.',
+      question: 'Is my data stored securely?',
+      answer: 'Yes. All personal and health data is encrypted and stored securely. You can find more details in our Privacy Policy.',
     },
     {
       id: 5,
-      question: '앱을 삭제하면 데이터도 삭제되나요?',
-      answer: '앱을 삭제하시면 로컬 데이터는 삭제되지만, 서버에 저장된 데이터는 유지됩니다. 계정 삭제를 원하시면 설정에서 계정 삭제를 진행해주세요.',
+      question: 'If I delete the app, is my data deleted too?',
+      answer: 'Deleting the app removes your local data, but data stored on the server is kept. If you want to delete your account, please do so from Settings.',
     },
   ];
 
@@ -55,13 +55,13 @@ export default function HelpScreen({ navigation }) {
         >
           <Text style={styles.backButtonText}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>도움말</Text>
+        <Text style={styles.headerTitle}>Help</Text>
         <View style={styles.placeholder} />
       </View>
 
       <ScrollView style={styles.content}>
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>자주 묻는 질문</Text>
+          <Text style={styles.sectionTitle}>Frequently Asked Questions</Text>
           <View style={styles.faqCard}>
             {faqItems.map((item) => (
               <View key={item.id}>
@@ -86,12 +86,12 @@ export default function HelpScreen({ navigation }) {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>문의하기</Text>
+          <Text style={styles.sectionTitle}>Contact Us</Text>
           <View style={styles.contactCard}>
             <View style={styles.contactItem}>
               <Text style={styles.contactIcon}>📧</Text>
               <View style={styles.contactInfo}>
-                <Text style={styles.contactLabel}>이메일</Text>
+                <Text style={styles.contactLabel}>Email</Text>
                 <Text style={styles.contactValue}>support@bloomdent.com</Text>
               </View>
             </View>
@@ -99,7 +99,7 @@ export default function HelpScreen({ navigation }) {
             <View style={styles.contactItem}>
               <Text style={styles.contactIcon}>📞</Text>
               <View style={styles.contactInfo}>
-                <Text style={styles.contactLabel}>전화</Text>
+                <Text style={styles.contactLabel}>Phone</Text>
                 <Text style={styles.contactValue}>1588-0000</Text>
               </View>
             </View>
@@ -107,24 +107,24 @@ export default function HelpScreen({ navigation }) {
             <View style={styles.contactItem}>
               <Text style={styles.contactIcon}>🕐</Text>
               <View style={styles.contactInfo}>
-                <Text style={styles.contactLabel}>운영 시간</Text>
-                <Text style={styles.contactValue}>평일 09:00 - 18:00</Text>
+                <Text style={styles.contactLabel}>Hours</Text>
+                <Text style={styles.contactValue}>Weekdays 09:00 - 18:00</Text>
               </View>
             </View>
           </View>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>앱 사용 가이드</Text>
+          <Text style={styles.sectionTitle}>App Guide</Text>
           <View style={styles.guideCard}>
             <View style={styles.guideItem}>
               <View style={[styles.guideIcon, styles.blueBackground]}>
                 <Text style={styles.guideIconText}>📸</Text>
               </View>
               <View style={styles.guideContent}>
-                <Text style={styles.guideTitle}>사진 촬영</Text>
+                <Text style={styles.guideTitle}>Taking photos</Text>
                 <Text style={styles.guideDescription}>
-                  구강 내부를 명확하게 촬영하면 더 정확한 분석 결과를 얻을 수 있습니다.
+                  Capturing the inside of your mouth clearly gives you more accurate analysis results.
                 </Text>
               </View>
             </View>
@@ -133,9 +133,9 @@ export default function HelpScreen({ navigation }) {
                 <Text style={styles.guideIconText}>📊</Text>
               </View>
               <View style={styles.guideContent}>
-                <Text style={styles.guideTitle}>통계 확인</Text>
+                <Text style={styles.guideTitle}>Checking statistics</Text>
                 <Text style={styles.guideDescription}>
-                  마이페이지에서 관리 일수, 평균 점수 등 통계를 확인할 수 있습니다.
+                  On My Page, you can check statistics such as care days and average score.
                 </Text>
               </View>
             </View>
@@ -144,9 +144,9 @@ export default function HelpScreen({ navigation }) {
                 <Text style={styles.guideIconText}>📅</Text>
               </View>
               <View style={styles.guideContent}>
-                <Text style={styles.guideTitle}>예약 관리</Text>
+                <Text style={styles.guideTitle}>Managing appointments</Text>
                 <Text style={styles.guideDescription}>
-                  예약 화면에서 예약 내역을 확인하고 새로운 예약을 할 수 있습니다.
+                  On the appointment screen, you can review your appointments and book new ones.
                 </Text>
               </View>
             </View>

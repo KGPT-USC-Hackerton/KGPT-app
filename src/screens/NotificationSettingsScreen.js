@@ -72,7 +72,7 @@ export default function NotificationSettingsScreen({ navigation }) {
           >
             <Text style={styles.backButtonText}>←</Text>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>알림 설정</Text>
+          <Text style={styles.headerTitle}>Notification Settings</Text>
           <View style={styles.placeholder} />
         </View>
         <View style={styles.loadingContainer}>
@@ -91,21 +91,21 @@ export default function NotificationSettingsScreen({ navigation }) {
         >
           <Text style={styles.backButtonText}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>알림 설정</Text>
+        <Text style={styles.headerTitle}>Notification Settings</Text>
         <View style={styles.placeholder} />
       </View>
 
       <ScrollView style={styles.content}>
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>푸시 알림</Text>
+          <Text style={styles.sectionTitle}>Push Notifications</Text>
           <View style={styles.settingsCard}>
             <View style={styles.settingItem}>
               <View style={styles.settingLeft}>
                 <Text style={styles.settingIcon}>🔔</Text>
                 <View style={styles.settingTextContainer}>
-                  <Text style={styles.settingText}>푸시 알림</Text>
+                  <Text style={styles.settingText}>Push notifications</Text>
                   <Text style={styles.settingDescription}>
-                    모든 푸시 알림 받기
+                    Receive all push notifications
                   </Text>
                 </View>
               </View>
@@ -120,15 +120,15 @@ export default function NotificationSettingsScreen({ navigation }) {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>이메일 알림</Text>
+          <Text style={styles.sectionTitle}>Email Notifications</Text>
           <View style={styles.settingsCard}>
             <View style={styles.settingItem}>
               <View style={styles.settingLeft}>
                 <Text style={styles.settingIcon}>📧</Text>
                 <View style={styles.settingTextContainer}>
-                  <Text style={styles.settingText}>이메일 알림</Text>
+                  <Text style={styles.settingText}>Email notifications</Text>
                   <Text style={styles.settingDescription}>
-                    이메일로 알림 받기
+                    Receive notifications by email
                   </Text>
                 </View>
               </View>
@@ -143,15 +143,15 @@ export default function NotificationSettingsScreen({ navigation }) {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>관리 알림</Text>
+          <Text style={styles.sectionTitle}>Care Reminders</Text>
           <View style={styles.settingsCard}>
             <View style={styles.settingItem}>
               <View style={styles.settingLeft}>
                 <Text style={styles.settingIcon}>🦷</Text>
                 <View style={styles.settingTextContainer}>
-                  <Text style={styles.settingText}>관리 알림</Text>
+                  <Text style={styles.settingText}>Care reminders</Text>
                   <Text style={styles.settingDescription}>
-                    구강 관리 시간 알림
+                    Oral care time reminders
                   </Text>
                 </View>
               </View>
@@ -167,9 +167,9 @@ export default function NotificationSettingsScreen({ navigation }) {
               <View style={styles.settingLeft}>
                 <Text style={styles.settingIcon}>📅</Text>
                 <View style={styles.settingTextContainer}>
-                  <Text style={styles.settingText}>예약 알림</Text>
+                  <Text style={styles.settingText}>Appointment reminders</Text>
                   <Text style={styles.settingDescription}>
-                    예약 일정 알림
+                    Appointment schedule reminders
                   </Text>
                 </View>
               </View>
@@ -185,9 +185,9 @@ export default function NotificationSettingsScreen({ navigation }) {
               <View style={styles.settingLeft}>
                 <Text style={styles.settingIcon}>🤖</Text>
                 <View style={styles.settingTextContainer}>
-                  <Text style={styles.settingText}>분석 완료 알림</Text>
+                  <Text style={styles.settingText}>Analysis complete</Text>
                   <Text style={styles.settingDescription}>
-                    AI 분석 완료 알림
+                    AI analysis completion alerts
                   </Text>
                 </View>
               </View>
@@ -202,15 +202,15 @@ export default function NotificationSettingsScreen({ navigation }) {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>리포트</Text>
+          <Text style={styles.sectionTitle}>Reports</Text>
           <View style={styles.settingsCard}>
             <View style={styles.settingItem}>
               <View style={styles.settingLeft}>
                 <Text style={styles.settingIcon}>📊</Text>
                 <View style={styles.settingTextContainer}>
-                  <Text style={styles.settingText}>주간 리포트</Text>
+                  <Text style={styles.settingText}>Weekly report</Text>
                   <Text style={styles.settingDescription}>
-                    매주 리포트 받기
+                    Receive a report every week
                   </Text>
                 </View>
               </View>

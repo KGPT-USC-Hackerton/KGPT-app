@@ -64,7 +64,7 @@ export default function StatisticsScreen({ navigation }) {
           >
             <Text style={styles.backButtonText}>←</Text>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>통계</Text>
+          <Text style={styles.headerTitle}>Statistics</Text>
           <View style={styles.placeholder} />
         </View>
         <View style={styles.loadingContainer}>
@@ -83,7 +83,7 @@ export default function StatisticsScreen({ navigation }) {
         >
           <Text style={styles.backButtonText}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>통계</Text>
+        <Text style={styles.headerTitle}>Statistics</Text>
         <View style={styles.placeholder} />
       </View>
 
@@ -94,7 +94,7 @@ export default function StatisticsScreen({ navigation }) {
               <Text style={styles.statIconText}>📅</Text>
             </View>
             <Text style={styles.statNumber}>{stats.totalDays}</Text>
-            <Text style={styles.statLabel}>관리 일수</Text>
+            <Text style={styles.statLabel}>Care days</Text>
           </View>
 
           <View style={styles.statCard}>
@@ -104,7 +104,7 @@ export default function StatisticsScreen({ navigation }) {
             <Text style={[styles.statNumber, styles.greenText]}>
               {stats.averageScore}
             </Text>
-            <Text style={styles.statLabel}>평균 점수</Text>
+            <Text style={styles.statLabel}>Average score</Text>
           </View>
 
           <View style={styles.statCard}>
@@ -114,7 +114,7 @@ export default function StatisticsScreen({ navigation }) {
             <Text style={[styles.statNumber, styles.purpleText]}>
               {stats.completedAppointments}
             </Text>
-            <Text style={styles.statLabel}>예약 완료</Text>
+            <Text style={styles.statLabel}>Appointments completed</Text>
           </View>
 
           <View style={styles.statCard}>
@@ -124,7 +124,7 @@ export default function StatisticsScreen({ navigation }) {
             <Text style={[styles.statNumber, styles.orangeText]}>
               {stats.totalAnalyses}
             </Text>
-            <Text style={styles.statLabel}>AI 분석</Text>
+            <Text style={styles.statLabel}>AI analyses</Text>
           </View>
 
           <View style={styles.statCard}>
@@ -134,31 +134,31 @@ export default function StatisticsScreen({ navigation }) {
             <Text style={[styles.statNumber, styles.redText]}>
               {stats.streakDays}
             </Text>
-            <Text style={styles.statLabel}>연속 기록</Text>
+            <Text style={styles.statLabel}>Streak</Text>
           </View>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>상세 통계</Text>
+          <Text style={styles.sectionTitle}>Detailed statistics</Text>
           <View style={styles.detailCard}>
             <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>이번 달 관리 일수</Text>
-              <Text style={styles.detailValue}>23일</Text>
+              <Text style={styles.detailLabel}>Care days this month</Text>
+              <Text style={styles.detailValue}>23 days</Text>
             </View>
             <View style={styles.divider} />
             <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>이번 달 평균 점수</Text>
-              <Text style={styles.detailValue}>88점</Text>
+              <Text style={styles.detailLabel}>Average score this month</Text>
+              <Text style={styles.detailValue}>88 pts</Text>
             </View>
             <View style={styles.divider} />
             <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>최고 점수</Text>
-              <Text style={styles.detailValue}>95점</Text>
+              <Text style={styles.detailLabel}>Best score</Text>
+              <Text style={styles.detailValue}>95 pts</Text>
             </View>
             <View style={styles.divider} />
             <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>가장 긴 연속 기록</Text>
-              <Text style={styles.detailValue}>15일</Text>
+              <Text style={styles.detailLabel}>Longest streak</Text>
+              <Text style={styles.detailValue}>15 days</Text>
             </View>
           </View>
         </View>

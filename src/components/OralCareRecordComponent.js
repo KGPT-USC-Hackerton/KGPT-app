@@ -71,7 +71,7 @@ export default function OralCareRecordComponent({
 
       if (!res.ok || !json.success) {
         throw new Error(
-          json.message || `상세 조회 실패 (status ${res.status})`,
+          json.message || `Failed to load details (status ${res.status})`,
         );
       }
 
@@ -83,7 +83,7 @@ export default function OralCareRecordComponent({
       console.log('detail fetch error:', err);
       setErrorMap(prev => ({
         ...prev,
-        [sessionId]: err.message || '상세 조회 중 오류가 발생했습니다.',
+        [sessionId]: err.message || 'An error occurred while loading details.',
       }));
     } finally {
       setLoadingId(null);
@@ -97,10 +97,10 @@ export default function OralCareRecordComponent({
   };
 
   const getStatusText = score => {
-    if (score >= 85) return '전반적으로 매우 건강한 상태입니다.';
+    if (score >= 85) return 'Overall, your oral health is in great shape.';
     if (score >= 70)
-      return '주의가 필요합니다. 관리 습관을 조금만 보완해 주세요.';
-    return '위험 신호입니다. 치과 내원 및 전문적인 검진을 권장드려요.';
+      return 'Some attention needed. Try improving your care habits a little.';
+    return 'Warning sign. We recommend visiting a dental clinic for a professional checkup.';
   };
 
   const openProductLink = async link => {
@@ -119,7 +119,7 @@ export default function OralCareRecordComponent({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.sectionTitle}>최근 구강 관리 기록</Text>
+      <Text style={styles.sectionTitle}>Recent oral care history</Text>
 
       {records.map(item => {
         // sessionId는 detail_survey 조회에 사용
@@ -162,7 +162,7 @@ export default function OralCareRecordComponent({
 
               <View style={[styles.badge, { backgroundColor: statusColor }]}>
                 <Text style={styles.badgeText}>
-                  점수: {Math.round(item.score)}
+                  Score: {Math.round(item.score)}
                 </Text>
               </View>
             </View>
@@ -178,7 +178,7 @@ export default function OralCareRecordComponent({
                   <View style={styles.detailLoadingRow}>
                     <ActivityIndicator size="small" color="#2563eb" />
                     <Text style={styles.detailLoadingText}>
-                      AI 분석 내용을 불러오는 중입니다...
+                      Loading AI analysis...
                     </Text>
                   </View>
                 )}
@@ -194,7 +194,7 @@ export default function OralCareRecordComponent({
                     {/* 요약 */}
                     {analysis?.summary && (
                       <View style={styles.detailSection}>
-                        <Text style={styles.detailTitle}>AI 분석 요약</Text>
+                        <Text style={styles.detailTitle}>AI analysis summary</Text>
                         <Text style={styles.detailBody}>
                           {analysis.summary}
                         </Text>
@@ -204,7 +204,7 @@ export default function OralCareRecordComponent({
                     {/* 세부 설명 */}
                     {analysis?.details && (
                       <View style={styles.detailSection}>
-                        <Text style={styles.detailTitle}>세부 설명</Text>
+                        <Text style={styles.detailTitle}>Details</Text>
                         <Text style={styles.detailBody}>
                           {analysis.details}
                         </Text>
@@ -215,7 +215,7 @@ export default function OralCareRecordComponent({
                     {Array.isArray(analysis?.risk_factors) &&
                       analysis.risk_factors.length > 0 && (
                         <View style={styles.detailSection}>
-                          <Text style={styles.detailTitle}>위험 요인</Text>
+                          <Text style={styles.detailTitle}>Risk factors</Text>
                           {analysis.risk_factors.map((rf, idx) => (
                             <Text key={idx} style={styles.bulletText}>
                               • {rf}
@@ -228,7 +228,7 @@ export default function OralCareRecordComponent({
                     {Array.isArray(analysis?.improvements) &&
                       analysis.improvements.length > 0 && (
                         <View style={styles.detailSection}>
-                          <Text style={styles.detailTitle}>개선 행동</Text>
+                          <Text style={styles.detailTitle}>Suggested improvements</Text>
                           {analysis.improvements.map((imp, idx) => (
                             <Text key={idx} style={styles.bulletText}>
                               • {imp}
@@ -241,7 +241,7 @@ export default function OralCareRecordComponent({
                     {Array.isArray(recommendations) &&
                       recommendations.length > 0 && (
                         <View style={styles.detailSection}>
-                          <Text style={styles.detailTitle}>추천 구강 용품</Text>
+                          <Text style={styles.detailTitle}>Recommended oral care products</Text>
                           {recommendations.map((rec, idx) => (
                             <View key={idx} style={styles.productRow}>
                               <TouchableOpacity
@@ -249,7 +249,7 @@ export default function OralCareRecordComponent({
                                 activeOpacity={0.7}
                               >
                                 <Text style={styles.productName}>
-                                  {rec.name || '제품'}
+                                  {rec.name || 'Product'}
                                 </Text>
                               </TouchableOpacity>
                               {rec.reason && (

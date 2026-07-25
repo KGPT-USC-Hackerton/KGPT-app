@@ -13,14 +13,14 @@ import {
 import { fetchImageAnalysisHistories } from '../services/imageAnalysisHistoryService';
 
 const POSITION_LABELS = {
-  upper: '윗니',
-  lower: '아랫니',
-  front: '앞니',
+  upper: 'Upper teeth',
+  lower: 'Lower teeth',
+  front: 'Front teeth',
 };
 
 function parseCavityText(cavityLocations) {
   if (!cavityLocations) {
-    return '충치 정보가 없습니다.';
+    return 'No cavity information available.';
   }
 
   let locationsArray = cavityLocations;
@@ -29,12 +29,12 @@ function parseCavityText(cavityLocations) {
       locationsArray = JSON.parse(cavityLocations);
     } catch (e) {
       console.warn('cavity_locations JSON 파싱 실패:', e);
-      return '충치 정보 파싱 중 오류가 발생했습니다.';
+      return 'An error occurred while parsing cavity information.';
     }
   }
 
   if (!Array.isArray(locationsArray) || locationsArray.length === 0) {
-    return '충치가 발견되지 않았습니다.';
+    return 'No cavities were found.';
   }
 
   const parts = locationsArray.map(loc => {
@@ -43,10 +43,10 @@ function parseCavityText(cavityLocations) {
       typeof loc.confidence === 'number'
         ? Math.round(loc.confidence * 100)
         : null;
-    return conf != null ? `${tooth}번 치아(${conf}%)` : `${tooth}번 치아`;
+    return conf != null ? `Tooth ${tooth} (${conf}%)` : `Tooth ${tooth}`;
   });
 
-  return `${parts.join(', ')}에 충치가 의심됩니다.`;
+  return `Possible cavities on ${parts.join(', ')}.`;
 }
 
 export default function ImageAnalysisHistoryComponent({ refreshKey }) {
@@ -63,7 +63,7 @@ export default function ImageAnalysisHistoryComponent({ refreshKey }) {
       setHistories(data);
     } catch (e) {
       console.error(e);
-      setError(e.message || '기록을 불러오지 못했습니다.');
+      setError(e.message || 'Failed to load records.');
     } finally {
       setLoading(false);
     }
@@ -86,10 +86,10 @@ export default function ImageAnalysisHistoryComponent({ refreshKey }) {
       >
         <View style={styles.cardHeader}>
           <Text style={styles.cardDate}>{dateLabel}</Text>
-          <Text style={styles.cardTag}>구강 사진 분석</Text>
+          <Text style={styles.cardTag}>Oral photo analysis</Text>
         </View>
         <Text style={styles.cardSummary} numberOfLines={2}>
-          {item.llm_summary || 'AI 분석 요약이 없습니다.'}
+          {item.llm_summary || 'No AI analysis summary available.'}
         </Text>
       </TouchableOpacity>
     );
@@ -97,12 +97,12 @@ export default function ImageAnalysisHistoryComponent({ refreshKey }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.sectionTitle}>구강 사진 분석 기록</Text>
+      <Text style={styles.sectionTitle}>Oral photo analysis history</Text>
 
       {loading && (
         <View style={styles.center}>
           <ActivityIndicator />
-          <Text style={styles.loadingText}>기록을 불러오는 중...</Text>
+          <Text style={styles.loadingText}>Loading records...</Text>
         </View>
       )}
 
@@ -115,7 +115,7 @@ export default function ImageAnalysisHistoryComponent({ refreshKey }) {
       {!loading && !error && histories.length === 0 && (
         <View style={styles.center}>
           <Text style={styles.emptyText}>
-            아직 구강 사진 분석 기록이 없습니다.
+            No oral photo analysis history yet.
           </Text>
         </View>
       )}
@@ -137,9 +137,9 @@ export default function ImageAnalysisHistoryComponent({ refreshKey }) {
       >
         {selectedHistory && (
           <ScrollView style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>구강 사진 분석 상세</Text>
+            <Text style={styles.modalTitle}>Oral photo analysis details</Text>
             <Text style={styles.modalSummary}>
-              {selectedHistory.llm_summary || '요약 정보가 없습니다.'}
+              {selectedHistory.llm_summary || 'No summary available.'}
             </Text>
 
             {['upper', 'lower', 'front'].map(type => {
@@ -174,7 +174,7 @@ export default function ImageAnalysisHistoryComponent({ refreshKey }) {
               style={styles.closeButton}
               onPress={() => setSelectedHistory(null)}
             >
-              <Text style={styles.closeButtonText}>닫기</Text>
+              <Text style={styles.closeButtonText}>Close</Text>
             </TouchableOpacity>
           </ScrollView>
         )}

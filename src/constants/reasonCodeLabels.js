@@ -8,11 +8,11 @@
 // 정책: 알 수 없는 코드는 원문을 출력하지 않고 배지를 표시하지 않는다(null 반환).
 //       임의의 일반 fallback 문구를 생성하지 않는다.
 const REASON_CODE_LABELS = {
-  GENERAL_DAILY_HYGIENE: '매일 구강 위생 관리',
-  GENTLE_BRUSHING_SUPPORT: '부드러운 칫솔질에 도움',
-  CAVITY_PREVENTION_SUPPORT: '충치 예방 관리',
-  FLUORIDE_HYGIENE_SUPPORT: '불소 위생 관리',
-  INTERDENTAL_CLEANING_SUPPORT: '치아 사이 관리',
+  GENERAL_DAILY_HYGIENE: 'Daily oral hygiene care',
+  GENTLE_BRUSHING_SUPPORT: 'Helps with gentle brushing',
+  CAVITY_PREVENTION_SUPPORT: 'Cavity prevention care',
+  FLUORIDE_HYGIENE_SUPPORT: 'Fluoride hygiene care',
+  INTERDENTAL_CLEANING_SUPPORT: 'Between-teeth care',
 };
 
 /**

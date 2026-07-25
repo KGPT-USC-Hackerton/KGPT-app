@@ -19,14 +19,14 @@ export default function PhotoAnalysisSummaryCard({ history, onPress }) {
   // 상태 텍스트 (completed_count 로 판단)
   const isCompleted = Number(history.completed_count || 0) >= 3;
   const statusText = isCompleted
-    ? 'AI 분석이 완료되었습니다.'
-    : '분석이 진행 중입니다.';
+    ? 'AI analysis is complete.'
+    : 'Analysis is in progress.';
 
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
       <View style={styles.cardHeader}>
         <Text style={styles.cardDate}>{dateLabel}</Text>
-        <Text style={styles.cardTag}>구강 사진 분석</Text>
+        <Text style={styles.cardTag}>Oral photo analysis</Text>
       </View>
       <Text style={styles.cardSummary} numberOfLines={2}>
         {history.llm_summary || statusText}

@@ -38,47 +38,47 @@ const Start_SurveyScreen = ({ onComplete, isNewUser = false }) => {
     {
       category: '기본정보',
       key: 'visitedDentist',
-      text: '최근 6개월 이내에 치과에 방문한 적이 있나요?',
+      text: 'Have you visited a dental clinic in the last 6 months?',
     },
     {
       category: '기본정보',
       key: 'brushTwiceDaily',
-      text: '하루 2회 이상 양치하나요?',
+      text: 'Do you brush at least twice a day?',
     },
     {
       category: '위생습관',
       key: 'useOralCareProducts',
-      text: '구강관리용품(치실, 치간칫솔, 가글 등)을 꾸준히 사용하나요?',
+      text: 'Do you regularly use oral care products (floss, interdental brushes, mouthwash, etc.)?',
     },
     {
       category: '위생습관',
       key: 'replaceToothbrush',
-      text: '칫솔모를 3개월마다 교체하나요?',
+      text: 'Do you replace your toothbrush every 3 months?',
     },
     {
       category: '식습관',
       key: 'limitSweets',
-      text: '단 음료나 간식을 자주 섭취하지 않나요?',
+      text: 'Do you avoid frequent sugary drinks and snacks?',
     },
     {
       category: '식습관',
       key: 'brushAfterMeal',
-      text: '식사 후 30분 이내에 양치하나요?',
+      text: 'Do you brush within 30 minutes after meals?',
     },
     {
       category: '건강관리',
       key: 'scalingFluoride',
-      text: '최근 1년 내 스케일링 또는 불소도포를 받은 적이 있나요?',
+      text: 'Have you had a scaling or fluoride treatment in the last year?',
     },
     {
       category: '건강관리',
       key: 'noGumBleeding',
-      text: '양치할 때 잇몸 출혈이 거의 없나요?',
+      text: 'Do your gums rarely bleed when you brush?',
     },
     {
       category: '생활습관',
       key: 'noSmoking',
-      text: '흡연 또는 전자담배를 사용하지 않나요?',
+      text: 'Do you avoid smoking and e-cigarettes?',
     },
   ];
 
@@ -103,7 +103,7 @@ const Start_SurveyScreen = ({ onComplete, isNewUser = false }) => {
 
   const handleNext = async () => {
     if (answers[currentQuestion.key] === null) {
-      Alert.alert('알림', '답변을 선택해주세요.');
+      Alert.alert('Notice', 'Please select an answer.');
       return;
     }
 
@@ -124,7 +124,7 @@ const Start_SurveyScreen = ({ onComplete, isNewUser = false }) => {
         const tempSignUpData = await getTempSignUpData();
         
         if (!tempSignUpData) {
-          Alert.alert('오류', '회원가입 정보를 찾을 수 없습니다.');
+          Alert.alert('Error', 'Sign-up information not found.');
           setIsRegistering(false);
           return;
         }
@@ -157,17 +157,17 @@ const Start_SurveyScreen = ({ onComplete, isNewUser = false }) => {
         }
       } catch (error) {
         setIsRegistering(false);
-        let errorMessage = '회원가입 중 오류가 발생했습니다.';
-        
+        let errorMessage = 'An error occurred during sign-up.';
+
         if (error.status === 409) {
-          errorMessage = error.message || '이미 사용 중인 아이디입니다.';
+          errorMessage = error.message || 'This ID is already in use.';
         } else if (error.status === 400) {
-          errorMessage = error.message || '입력 정보를 확인해주세요.';
+          errorMessage = error.message || 'Please check your input.';
         } else if (error.message) {
           errorMessage = error.message;
         }
 
-        Alert.alert('오류', errorMessage);
+        Alert.alert('Error', errorMessage);
       }
     } else {
       // 기존 사용자 설문인 경우: 기존 로직 유지
@@ -200,11 +200,11 @@ const Start_SurveyScreen = ({ onComplete, isNewUser = false }) => {
 
   const getCategoryTitle = (category) => {
     const categoryMap = {
-      '기본정보': '기본정보',
-      '위생습관': '위생습관',
-      '식습관': '식습관',
-      '건강관리': '건강관리',
-      '생활습관': '생활습관',
+      '기본정보': 'Basic information',
+      '위생습관': 'Hygiene habits',
+      '식습관': 'Eating habits',
+      '건강관리': 'Health care',
+      '생활습관': 'Lifestyle',
     };
     return categoryMap[category] || category;
   };
@@ -217,7 +217,7 @@ const Start_SurveyScreen = ({ onComplete, isNewUser = false }) => {
       <SafeAreaView style={styles.container}>
         <View style={styles.submitMessageContainer}>
           <ActivityIndicator size="large" color="#007AFF" />
-          <Text style={styles.loadingText}>회원가입 처리 중...</Text>
+          <Text style={styles.loadingText}>Signing up...</Text>
         </View>
       </SafeAreaView>
     );
@@ -230,11 +230,11 @@ const Start_SurveyScreen = ({ onComplete, isNewUser = false }) => {
         <View style={styles.submitMessageContainer}>
           <View style={styles.submitMessageBox}>
             <Text style={styles.checkIcon}>✓</Text>
-            <Text style={styles.submitMessageText}>제출되었습니다</Text>
+            <Text style={styles.submitMessageText}>Submitted</Text>
           </View>
           {countdown > 0 && (
             <View style={styles.countdownContainer}>
-              <Text style={styles.countdownLabel}>홈화면으로 가는중</Text>
+              <Text style={styles.countdownLabel}>Going to home screen</Text>
               <Text style={styles.countdownNumber}>{countdown}</Text>
             </View>
           )}
@@ -246,7 +246,7 @@ const Start_SurveyScreen = ({ onComplete, isNewUser = false }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>초기 설문</Text>
+        <Text style={styles.headerTitle}>Initial survey</Text>
         <Text style={styles.progressText}>
           {currentQuestionIndex + 1} / {questions.length}
         </Text>
@@ -285,7 +285,7 @@ const Start_SurveyScreen = ({ onComplete, isNewUser = false }) => {
                   answers[currentQuestion.key] === true && styles.answerButtonTextSelected,
                 ]}
               >
-                ✅ 예
+                ✅ Yes
               </Text>
             </TouchableOpacity>
             
@@ -302,7 +302,7 @@ const Start_SurveyScreen = ({ onComplete, isNewUser = false }) => {
                   answers[currentQuestion.key] === false && styles.answerButtonTextSelectedNo,
                 ]}
               >
-                ❌ 아니오
+                ❌ No
               </Text>
             </TouchableOpacity>
           </View>
@@ -316,7 +316,7 @@ const Start_SurveyScreen = ({ onComplete, isNewUser = false }) => {
               style={styles.previousButton}
               onPress={handlePrevious}
             >
-              <Text style={styles.previousButtonText}>이전</Text>
+              <Text style={styles.previousButtonText}>Back</Text>
             </TouchableOpacity>
           )}
           
@@ -329,7 +329,7 @@ const Start_SurveyScreen = ({ onComplete, isNewUser = false }) => {
             disabled={answers[currentQuestion.key] === null}
           >
             <Text style={styles.nextButtonText}>
-              {isLastQuestion ? '제출하기' : '다음'}
+              {isLastQuestion ? 'Submit' : 'Next'}
             </Text>
           </TouchableOpacity>
         </View>

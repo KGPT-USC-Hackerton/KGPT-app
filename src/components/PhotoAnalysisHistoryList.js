@@ -15,9 +15,9 @@ import { getUserHistories } from '../services/imageService';
 import { get } from '../services/api'; // /api/ai/image-analysis/history/:historyId
 
 const POSITION_LABELS = {
-  upper: '윗니',
-  lower: '아랫니',
-  front: '앞니',
+  upper: 'Upper teeth',
+  lower: 'Lower teeth',
+  front: 'Front teeth',
 };
 
 export default function PhotoAnalysisHistoryList({ visible = true }) {
@@ -39,18 +39,18 @@ export default function PhotoAnalysisHistoryList({ visible = true }) {
 
       const user = await getUser();
       if (!user?.id) {
-        throw new Error('로그인 정보가 없습니다.');
+        throw new Error('No login information found.');
       }
 
       const res = await getUserHistories(user.id);
       if (!res.success) {
-        throw new Error(res.message || '히스토리 목록을 불러오지 못했습니다.');
+        throw new Error(res.message || 'Failed to load the history list.');
       }
 
       setHistories(res.data || []);
     } catch (e) {
       console.error('사진 히스토리 목록 로딩 오류:', e);
-      setError(e.message || '히스토리 목록 로딩 중 오류가 발생했습니다.');
+      setError(e.message || 'An error occurred while loading the history list.');
     } finally {
       setLoading(false);
     }
@@ -73,7 +73,7 @@ export default function PhotoAnalysisHistoryList({ visible = true }) {
     try {
       const user = await getUser();
       if (!user?.id) {
-        throw new Error('로그인 정보가 없습니다.');
+        throw new Error('No login information found.');
       }
 
       // 쿼리스트링으로 user_id 같이 전송
@@ -83,7 +83,7 @@ export default function PhotoAnalysisHistoryList({ visible = true }) {
 
       if (!res.success || !res.data) {
         throw new Error(
-          res.message || '이미지 분석 결과를 불러오지 못했습니다.',
+          res.message || 'Failed to load the image analysis results.',
         );
       }
 
@@ -144,7 +144,7 @@ export default function PhotoAnalysisHistoryList({ visible = true }) {
         [historyId]: {
           ...(prev[historyId] || {}),
           loading: false,
-          error: e.message || '상세 분석 결과 로딩 중 오류가 발생했습니다.',
+          error: e.message || 'An error occurred while loading the detailed analysis results.',
         },
       }));
     }
@@ -187,8 +187,8 @@ export default function PhotoAnalysisHistoryList({ visible = true }) {
 
     const statusText =
       history.completed_count >= 3
-        ? '분석 결과 확인하기'
-        : '분석이 아직 진행 중입니다.';
+        ? 'View analysis results'
+        : 'Analysis is still in progress.';
 
     return (
       <TouchableOpacity
@@ -204,7 +204,7 @@ export default function PhotoAnalysisHistoryList({ visible = true }) {
             <Text style={styles.dateText}>{firstDate}</Text>
           </View>
           <Text style={styles.statusBadge}>
-            {history.completed_count >= 3 ? '완료' : '진행 중'}
+            {history.completed_count >= 3 ? 'Complete' : 'In progress'}
           </Text>
         </View>
 
@@ -219,7 +219,7 @@ export default function PhotoAnalysisHistoryList({ visible = true }) {
               <View style={styles.detailLoading}>
                 <ActivityIndicator size="small" color="#3b82f6" />
                 <Text style={styles.detailLoadingText}>
-                  상세 분석을 불러오는 중입니다...
+                  Loading detailed analysis...
                 </Text>
               </View>
             )}
@@ -237,7 +237,7 @@ export default function PhotoAnalysisHistoryList({ visible = true }) {
                   return (
                     <View key={pos} style={styles.positionResultCard}>
                       <Text style={styles.positionResultTitle}>
-                        {p.label} 분석 결과
+                        {p.label} analysis result
                       </Text>
 
                       {p.analyzedImageUrl && (
@@ -256,7 +256,7 @@ export default function PhotoAnalysisHistoryList({ visible = true }) {
                       <View style={styles.positionResultMeta}>
                         {p.occlusionStatus && (
                           <Text style={styles.positionResultMetaText}>
-                            교합 상태: {p.occlusionStatus}
+                            Occlusion: {p.occlusionStatus}
                             {p.occlusionComment
                               ? ` - ${p.occlusionComment}`
                               : ''}
@@ -268,11 +268,11 @@ export default function PhotoAnalysisHistoryList({ visible = true }) {
                             <Text style={styles.positionResultMetaText}>
                               {p.cavityDetected
                                 ? p.cavityComment ||
-                                  `충치가 ${
+                                  `Found ${
                                     p.cavityCount != null ? p.cavityCount : ''
-                                  }개 발견되었습니다.`
+                                  } cavity(ies).`
                                 : p.cavityComment ||
-                                  '충치가 발견되지 않았습니다.'}
+                                  'No cavities were found.'}
                             </Text>
                           )}
                       </View>
@@ -298,7 +298,7 @@ export default function PhotoAnalysisHistoryList({ visible = true }) {
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="small" color="#3b82f6" />
         <Text style={styles.loadingText}>
-          구강 사진 분석 기록을 불러오는 중입니다...
+          Loading oral photo analysis history...
         </Text>
       </View>
     );
@@ -308,11 +308,11 @@ export default function PhotoAnalysisHistoryList({ visible = true }) {
     return (
       <View style={styles.errorContainer}>
         <Text style={styles.errorTitle}>
-          구강 사진 분석 기록을 불러오지 못했습니다.
+          Failed to load oral photo analysis history.
         </Text>
         <Text style={styles.errorText}>{error}</Text>
         <TouchableOpacity onPress={loadHistories} style={styles.retryButton}>
-          <Text style={styles.retryButtonText}>다시 시도</Text>
+          <Text style={styles.retryButtonText}>Try again</Text>
         </TouchableOpacity>
       </View>
     );
@@ -322,11 +322,11 @@ export default function PhotoAnalysisHistoryList({ visible = true }) {
     return (
       <View style={styles.emptyContainer}>
         <Text style={styles.emptyTitle}>
-          아직 구강 사진 분석 기록이 없습니다.
+          No oral photo analysis history yet.
         </Text>
         <Text style={styles.emptyText}>
-          윗니, 아랫니, 앞니 사진을 촬영하고 AI 분석을 받아보면{'\n'}
-          이곳에 기록이 쌓입니다.
+          Take photos of your upper, lower, and front teeth and get an AI analysis,{'\n'}
+          and your records will appear here.
         </Text>
       </View>
     );

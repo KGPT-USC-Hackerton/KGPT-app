@@ -34,8 +34,8 @@ export default function SubscriptionScreen({ navigation }) {
       // 실제로는 API 호출: const response = await get(`/users/${user.id}/subscription`);
       const mockData = {
         plan: 'premium',
-        planName: '프리미엄 플랜',
-        description: 'AI 분석 무제한 + 전문가 상담',
+        planName: 'Premium Plan',
+        description: 'Unlimited AI analysis + expert consultation',
         startDate: '2024-01-01',
         expiryDate: '2025-12-23',
         autoRenew: true,
@@ -53,23 +53,23 @@ export default function SubscriptionScreen({ navigation }) {
 
   const handleManageSubscription = () => {
     Alert.alert(
-      '구독 관리',
-      '구독 관리 기능은 준비 중입니다.',
-      [{ text: '확인' }]
+      'Manage subscription',
+      'Subscription management is coming soon.',
+      [{ text: 'OK' }]
     );
   };
 
   const handleCancelSubscription = () => {
     Alert.alert(
-      '구독 취소',
-      '정말 구독을 취소하시겠습니까?',
+      'Cancel subscription',
+      'Are you sure you want to cancel your subscription?',
       [
-        { text: '아니오', style: 'cancel' },
+        { text: 'No', style: 'cancel' },
         {
-          text: '예',
+          text: 'Yes',
           style: 'destructive',
           onPress: () => {
-            Alert.alert('알림', '구독 취소 기능은 준비 중입니다.');
+            Alert.alert('Notice', 'Subscription cancellation is coming soon.');
           },
         },
       ]
@@ -91,7 +91,7 @@ export default function SubscriptionScreen({ navigation }) {
           >
             <Text style={styles.backButtonText}>←</Text>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>구독 관리</Text>
+          <Text style={styles.headerTitle}>Subscription</Text>
           <View style={styles.placeholder} />
         </View>
         <View style={styles.loadingContainer}>
@@ -111,11 +111,11 @@ export default function SubscriptionScreen({ navigation }) {
           >
             <Text style={styles.backButtonText}>←</Text>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>구독 관리</Text>
+          <Text style={styles.headerTitle}>Subscription</Text>
           <View style={styles.placeholder} />
         </View>
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>구독 정보가 없습니다.</Text>
+          <Text style={styles.emptyText}>No subscription information.</Text>
         </View>
       </SafeAreaView>
     );
@@ -130,7 +130,7 @@ export default function SubscriptionScreen({ navigation }) {
         >
           <Text style={styles.backButtonText}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>구독 관리</Text>
+        <Text style={styles.headerTitle}>Subscription</Text>
         <View style={styles.placeholder} />
       </View>
 
@@ -143,49 +143,49 @@ export default function SubscriptionScreen({ navigation }) {
           
           <View style={styles.infoSection}>
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>시작일</Text>
+              <Text style={styles.infoLabel}>Start date</Text>
               <Text style={styles.infoValue}>{formatDate(subscription.startDate)}</Text>
             </View>
             <View style={styles.divider} />
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>만료일</Text>
+              <Text style={styles.infoLabel}>Expiry date</Text>
               <Text style={styles.infoValue}>{formatDate(subscription.expiryDate)}</Text>
             </View>
             <View style={styles.divider} />
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>결제 금액</Text>
+              <Text style={styles.infoLabel}>Payment amount</Text>
               <Text style={styles.infoValue}>
-                {subscription.price.toLocaleString()}원 / {subscription.billingCycle === 'monthly' ? '월' : '년'}
+                {subscription.price.toLocaleString()} KRW / {subscription.billingCycle === 'monthly' ? 'month' : 'year'}
               </Text>
             </View>
             <View style={styles.divider} />
             <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>자동 갱신</Text>
+              <Text style={styles.infoLabel}>Auto-renewal</Text>
               <Text style={styles.infoValue}>
-                {subscription.autoRenew ? '활성화' : '비활성화'}
+                {subscription.autoRenew ? 'On' : 'Off'}
               </Text>
             </View>
           </View>
         </View>
 
         <View style={styles.benefitsSection}>
-          <Text style={styles.sectionTitle}>구독 혜택</Text>
+          <Text style={styles.sectionTitle}>Subscription Benefits</Text>
           <View style={styles.benefitsCard}>
             <View style={styles.benefitItem}>
               <Text style={styles.benefitIcon}>✨</Text>
-              <Text style={styles.benefitText}>AI 분석 무제한 이용</Text>
+              <Text style={styles.benefitText}>Unlimited AI analysis</Text>
             </View>
             <View style={styles.benefitItem}>
               <Text style={styles.benefitIcon}>👨‍⚕️</Text>
-              <Text style={styles.benefitText}>전문가 상담 서비스</Text>
+              <Text style={styles.benefitText}>Expert consultation service</Text>
             </View>
             <View style={styles.benefitItem}>
               <Text style={styles.benefitIcon}>📊</Text>
-              <Text style={styles.benefitText}>상세 통계 및 리포트</Text>
+              <Text style={styles.benefitText}>Detailed statistics and reports</Text>
             </View>
             <View style={styles.benefitItem}>
               <Text style={styles.benefitIcon}>🔔</Text>
-              <Text style={styles.benefitText}>우선 알림 서비스</Text>
+              <Text style={styles.benefitText}>Priority notifications</Text>
             </View>
           </View>
         </View>
@@ -195,13 +195,13 @@ export default function SubscriptionScreen({ navigation }) {
             style={styles.manageButton}
             onPress={handleManageSubscription}
           >
-            <Text style={styles.manageButtonText}>구독 변경</Text>
+            <Text style={styles.manageButtonText}>Change plan</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.cancelButton}
             onPress={handleCancelSubscription}
           >
-            <Text style={styles.cancelButtonText}>구독 취소</Text>
+            <Text style={styles.cancelButtonText}>Cancel subscription</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

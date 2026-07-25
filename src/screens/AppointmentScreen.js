@@ -72,11 +72,11 @@ export default function AppointmentScreen() {
           const granted = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
             {
-              title: '위치 권한 요청',
-              message: '근처 치과를 찾기 위해 위치 권한이 필요합니다.',
-              buttonNeutral: '나중에',
-              buttonNegative: '거부',
-              buttonPositive: '허용',
+              title: 'Location permission request',
+              message: 'Location permission is required to find nearby dental clinics.',
+              buttonNeutral: 'Later',
+              buttonNegative: 'Deny',
+              buttonPositive: 'Allow',
             }
           );
           if (granted === PermissionsAndroid.RESULTS.GRANTED) {
@@ -121,7 +121,7 @@ export default function AppointmentScreen() {
       
       const userData = await getUser();
       if (!userData || !userData.id) {
-        setAppointmentsError('로그인이 필요합니다.');
+        setAppointmentsError('You need to log in.');
         setAppointmentsLoading(false);
         return;
       }
@@ -131,11 +131,11 @@ export default function AppointmentScreen() {
       if (response.success) {
         setAppointments(response.data);
       } else {
-        setAppointmentsError('예약 정보를 가져오는데 실패했습니다.');
+        setAppointmentsError('Failed to load appointment information.');
       }
     } catch (err) {
       console.error('예약 목록 조회 오류:', err);
-      setAppointmentsError(err.message || '예약 정보를 가져오는데 실패했습니다.');
+      setAppointmentsError(err.message || 'Failed to load appointment information.');
     } finally {
       setAppointmentsLoading(false);
     }
@@ -179,13 +179,13 @@ export default function AppointmentScreen() {
         setHasMore(!!pg.hasMore);
         setTotal(pg.total ?? response.data.length);
       } else {
-        setError('치과 정보를 가져오는데 실패했습니다.');
+        setError('Failed to load dental clinic information.');
       }
     } catch (err) {
       console.error('치과 목록 조회 오류:', err);
-      setError(err.message || '치과 정보를 가져오는데 실패했습니다.');
+      setError(err.message || 'Failed to load dental clinic information.');
       if (!append && !isRefresh) {
-        Alert.alert('오류', '치과 정보를 가져오는데 실패했습니다. 다시 시도해주세요.');
+        Alert.alert('Error', 'Failed to load dental clinic information. Please try again.');
       }
     } finally {
       setRefreshing(false);
@@ -208,7 +208,7 @@ export default function AppointmentScreen() {
   // 예약하기 버튼 클릭
   const handleBooking = async (clinic) => {
     if (clinic.is_partner !== 1) {
-      Alert.alert('알림', '이 병원은 협약 병원이 아닙니다. 전화로 예약해주세요.');
+      Alert.alert('Notice', 'This clinic is not a partner clinic. Please book by phone.');
       return;
     }
 
@@ -231,11 +231,11 @@ export default function AppointmentScreen() {
         setAvailableDates(response.data || []);
         setShowDatePicker(true);
       } else {
-        Alert.alert('오류', '예약 가능한 날짜를 불러올 수 없습니다.');
+        Alert.alert('Error', 'Unable to load available dates.');
       }
     } catch (err) {
       console.error('날짜 조회 오류:', err);
-      Alert.alert('오류', err.message || '예약 가능한 날짜를 불러올 수 없습니다.');
+      Alert.alert('Error', err.message || 'Unable to load available dates.');
     } finally {
       setLoadingDates(false);
     }
@@ -255,11 +255,11 @@ export default function AppointmentScreen() {
         setAvailableSlots(availableTimes);
         setShowTimePicker(true);
       } else {
-        Alert.alert('오류', '예약 가능한 시간을 불러올 수 없습니다.');
+        Alert.alert('Error', 'Unable to load available times.');
       }
     } catch (err) {
       console.error('시간 조회 오류:', err);
-      Alert.alert('오류', err.message || '예약 가능한 시간을 불러올 수 없습니다.');
+      Alert.alert('Error', err.message || 'Unable to load available times.');
     } finally {
       setLoadingSlots(false);
     }
@@ -290,11 +290,11 @@ export default function AppointmentScreen() {
         setSurveyQuestions(parsedQuestions);
         setShowSurvey(true);
       } else {
-        Alert.alert('오류', '설문 질문을 불러올 수 없습니다.');
+        Alert.alert('Error', 'Unable to load survey questions.');
       }
     } catch (err) {
       console.error('설문 질문 조회 오류:', err);
-      Alert.alert('오류', err.message || '설문 질문을 불러올 수 없습니다.');
+      Alert.alert('Error', err.message || 'Unable to load survey questions.');
     } finally {
       setLoadingSurvey(false);
     }
@@ -335,7 +335,7 @@ export default function AppointmentScreen() {
       const appointmentData = {
         clinic_id: selectedClinic.id,
         slot_id: selectedSlot.id,
-        patient_name: user?.name || '홍길동', // 사용자 정보에서 가져오기
+        patient_name: user?.name || 'John Doe', // 사용자 정보에서 가져오기
         patient_phone: user?.phone || '010-0000-0000',
         patient_email: user?.email || '',
         symptoms: surveyAnswers.find(a => a.question_id === surveyQuestions.find(q => q.question_type === 'text')?.id)?.answer || '',
@@ -349,9 +349,9 @@ export default function AppointmentScreen() {
       const response = await createAppointment(appointmentData);
       
       if (response.success) {
-        Alert.alert('성공', '예약이 완료되었습니다!', [
+        Alert.alert('Success', 'Your appointment has been booked!', [
           {
-            text: '확인',
+            text: 'OK',
             onPress: () => {
               // 상태 초기화
       setShowSurvey(false);
@@ -366,11 +366,11 @@ export default function AppointmentScreen() {
           },
         ]);
       } else {
-        Alert.alert('오류', response.message || '예약 생성에 실패했습니다.');
+        Alert.alert('Error', response.message || 'Failed to create appointment.');
       }
     } catch (err) {
       console.error('예약 생성 오류:', err);
-      Alert.alert('오류', err.message || '예약 생성에 실패했습니다.');
+      Alert.alert('Error', err.message || 'Failed to create appointment.');
     } finally {
       setCreatingAppointment(false);
     }
@@ -439,7 +439,7 @@ export default function AppointmentScreen() {
   // 전화 걸기
   const handleCall = (clinic) => {
     if (!clinic.phone) {
-      Alert.alert('알림', '전화번호가 등록되지 않은 병원입니다.');
+      Alert.alert('Notice', 'This clinic has no registered phone number.');
       return;
     }
 
@@ -447,18 +447,18 @@ export default function AppointmentScreen() {
     const phoneNumber = clinic.phone.replace(/[\s-]/g, '');
     
     Alert.alert(
-      '전화 걸기',
-      `${clinic.name}로 전화를 걸까요?\n\n${clinic.phone}`,
+      'Call',
+      `Call ${clinic.name}?\n\n${clinic.phone}`,
       [
         {
-          text: '취소',
+          text: 'Cancel',
           style: 'cancel',
         },
         {
-          text: '전화 걸기',
+          text: 'Call',
           onPress: () => {
             Linking.openURL(`tel:${phoneNumber}`).catch((err) => {
-              Alert.alert('오류', '전화를 걸 수 없습니다.');
+              Alert.alert('Error', 'Unable to make the call.');
               console.error('전화 걸기 오류:', err);
             });
           },
@@ -518,7 +518,7 @@ export default function AppointmentScreen() {
       <View style={styles.modalOverlay}>
         <View style={styles.modalContainer}>
           <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>예약 날짜 선택</Text>
+            <Text style={styles.modalTitle}>Select appointment date</Text>
             <TouchableOpacity onPress={() => setShowDatePicker(false)}>
               <Icon name="close" size={24} color="#6b7280" />
             </TouchableOpacity>
@@ -527,12 +527,12 @@ export default function AppointmentScreen() {
             {loadingDates ? (
               <View style={styles.loadingContainer}>
                 <ActivityIndicator size="large" color="#3b82f6" />
-                <Text style={styles.loadingText}>날짜를 불러오는 중...</Text>
+                <Text style={styles.loadingText}>Loading dates...</Text>
               </View>
             ) : availableDates.length === 0 ? (
               <View style={styles.emptyContainer}>
                 <Icon name="event" size={48} color="#9ca3af" />
-                <Text style={styles.emptyMessage}>예약 가능한 날짜가 없습니다.</Text>
+                <Text style={styles.emptyMessage}>No available dates.</Text>
               </View>
             ) : (
               <View style={styles.dateList}>
@@ -572,7 +572,7 @@ export default function AppointmentScreen() {
       <View style={styles.modalOverlay}>
         <View style={styles.modalContainer}>
           <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>예약 시간 선택</Text>
+            <Text style={styles.modalTitle}>Select appointment time</Text>
             <TouchableOpacity onPress={() => setShowTimePicker(false)}>
               <Icon name="close" size={24} color="#6b7280" />
             </TouchableOpacity>
@@ -581,12 +581,12 @@ export default function AppointmentScreen() {
             {loadingSlots ? (
               <View style={styles.loadingContainer}>
                 <ActivityIndicator size="large" color="#3b82f6" />
-                <Text style={styles.loadingText}>시간을 불러오는 중...</Text>
+                <Text style={styles.loadingText}>Loading times...</Text>
               </View>
             ) : availableSlots.length === 0 ? (
               <View style={styles.emptyContainer}>
                 <Icon name="schedule" size={48} color="#9ca3af" />
-                <Text style={styles.emptyMessage}>예약 가능한 시간이 없습니다.</Text>
+                <Text style={styles.emptyMessage}>No available times.</Text>
               </View>
             ) : (
               <View style={styles.timeList}>
@@ -629,9 +629,9 @@ export default function AppointmentScreen() {
     return (
       <View style={styles.container}>
         <View style={styles.surveyHeader}>
-          <Text style={styles.surveyTitle}>사전 자가진단</Text>
+          <Text style={styles.surveyTitle}>Pre-visit self-assessment</Text>
           <Text style={styles.surveySubtext}>
-            더 나은 진료를 위해 몇 가지 질문에 답해주세요
+            Please answer a few questions for a better visit
           </Text>
           <View style={styles.progressContainer}>
             <View style={styles.progressBar}>
@@ -656,13 +656,13 @@ export default function AppointmentScreen() {
                   onPress={() => handleSurveyAnswer(currentQuestion.id, 'yes')}
                   style={styles.surveyOption}
                 >
-                  <Text style={styles.surveyOptionText}>예</Text>
+                  <Text style={styles.surveyOptionText}>Yes</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => handleSurveyAnswer(currentQuestion.id, 'no')}
                   style={styles.surveyOption}
                 >
-                  <Text style={styles.surveyOptionText}>아니오</Text>
+                  <Text style={styles.surveyOptionText}>No</Text>
                 </TouchableOpacity>
               </>
             ) : currentQuestion.question_type === 'multiple_choice' && currentQuestion.options ? (
@@ -690,13 +690,13 @@ export default function AppointmentScreen() {
                   ))
                 ) : (
                   <View style={styles.textInputContainer}>
-                    <Text style={styles.textInputLabel}>선택지가 없습니다.</Text>
+                    <Text style={styles.textInputLabel}>No options available.</Text>
                   </View>
                 );
               })()
             ) : (
               <View style={styles.textInputContainer}>
-                <Text style={styles.textInputLabel}>답변을 입력해주세요</Text>
+                <Text style={styles.textInputLabel}>Please enter your answer</Text>
                 {/* 텍스트 입력은 나중에 구현 가능 */}
               </View>
             )}
@@ -715,7 +715,7 @@ export default function AppointmentScreen() {
             }}
             style={styles.skipButton}
           >
-            <Text style={styles.skipButtonText}>이전</Text>
+            <Text style={styles.skipButtonText}>Back</Text>
           </TouchableOpacity>
           {creatingAppointment && (
             <ActivityIndicator size="small" color="#3b82f6" style={{ marginTop: 16 }} />
@@ -742,7 +742,7 @@ export default function AppointmentScreen() {
       {/* 지도 영역 */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>근처 치과 찾기</Text>
+        <Text style={styles.sectionTitle}>Find nearby clinics</Text>
           <TouchableOpacity 
             style={styles.appointmentButton}
             onPress={() => setShowAppointmentsModal(true)}
@@ -802,7 +802,7 @@ export default function AppointmentScreen() {
             })}
           </MapView>
           <View style={styles.mapOverlayHint}>
-            <Text style={styles.mapOverlayText}>📍 지도를 탭하여 확대</Text>
+            <Text style={styles.mapOverlayText}>📍 Tap the map to expand</Text>
           </View>
           <TouchableOpacity
             style={styles.myLocationButton}
@@ -882,13 +882,13 @@ export default function AppointmentScreen() {
 
       {/* 치과 리스트 */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>전체 치과 ({total})</Text>
+        <Text style={styles.sectionTitle}>All clinics ({total})</Text>
         <View style={styles.divider} />
 
         {loading ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#3b82f6" />
-            <Text style={styles.loadingText}>치과 목록을 불러오는 중...</Text>
+            <Text style={styles.loadingText}>Loading clinic list...</Text>
           </View>
         ) : error ? (
           <View style={styles.errorContainer}>
@@ -898,13 +898,13 @@ export default function AppointmentScreen() {
               style={styles.retryButton}
               onPress={() => fetchClinics(1)}
             >
-              <Text style={styles.retryButtonText}>다시 시도</Text>
+              <Text style={styles.retryButtonText}>Try again</Text>
             </TouchableOpacity>
           </View>
         ) : clinics.length === 0 ? (
           <View style={styles.emptyContainer}>
             <Icon name="sentiment-dissatisfied" size={48} color="#9ca3af" />
-            <Text style={styles.emptyMessage}>등록된 치과가 없습니다.</Text>
+            <Text style={styles.emptyMessage}>No clinics registered.</Text>
           </View>
         ) : (
         <View style={styles.clinicList}>
@@ -927,7 +927,7 @@ export default function AppointmentScreen() {
                   <Text style={styles.clinicName}>{clinic.name}</Text>
                       {clinic.is_partner === 1 && (
                         <View style={styles.partnerBadge}>
-                          <Text style={styles.partnerBadgeText}>협약</Text>
+                          <Text style={styles.partnerBadgeText}>Partner</Text>
                         </View>
                       )}
                     </TouchableOpacity>
@@ -956,7 +956,7 @@ export default function AppointmentScreen() {
 
                   {clinic.availableSlots && clinic.availableSlots.length > 0 && (
                 <View style={styles.slotsSection}>
-                  <Text style={styles.slotsLabel}>예약 가능 시간</Text>
+                  <Text style={styles.slotsLabel}>Available times</Text>
                   <View style={styles.slotsContainer}>
                         {clinic.availableSlots.map((slot, slotIndex) => (
                           <View key={slotIndex} style={styles.slotTag}>
@@ -973,7 +973,7 @@ export default function AppointmentScreen() {
                   style={styles.bookingButton}
                 >
                       <Icon name="event" size={18} color="#ffffff" style={styles.buttonIcon} />
-                      <Text style={styles.bookingButtonText}>예약하기</Text>
+                      <Text style={styles.bookingButtonText}>Book</Text>
                 </TouchableOpacity>
                   ) : (
                     <TouchableOpacity
@@ -981,7 +981,7 @@ export default function AppointmentScreen() {
                       style={styles.callButton}
                     >
                       <Icon name="phone" size={18} color="#ffffff" style={styles.buttonIcon} />
-                      <Text style={styles.callButtonText}>전화 예약하기</Text>
+                      <Text style={styles.callButtonText}>Call to book</Text>
                     </TouchableOpacity>
                   )}
               </View>
@@ -1000,7 +1000,7 @@ export default function AppointmentScreen() {
                 <ActivityIndicator size="small" color="#3b82f6" />
               ) : (
                 <Text style={styles.loadMoreButtonText}>
-                  더보기 ({clinics.length}/{total})
+                  Load more ({clinics.length}/{total})
                 </Text>
               )}
             </TouchableOpacity>
@@ -1026,7 +1026,7 @@ export default function AppointmentScreen() {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>내 예약 확인 ({appointments.length})</Text>
+              <Text style={styles.modalTitle}>My appointments ({appointments.length})</Text>
               <TouchableOpacity onPress={() => setShowAppointmentsModal(false)}>
                 <Icon name="close" size={24} color="#6b7280" />
               </TouchableOpacity>
@@ -1036,7 +1036,7 @@ export default function AppointmentScreen() {
               {appointmentsLoading ? (
                 <View style={styles.loadingContainer}>
                   <ActivityIndicator size="large" color="#3b82f6" />
-                  <Text style={styles.loadingText}>예약 정보를 불러오는 중...</Text>
+                  <Text style={styles.loadingText}>Loading appointments...</Text>
                 </View>
               ) : appointmentsError ? (
                 <View style={styles.errorContainer}>
@@ -1046,13 +1046,13 @@ export default function AppointmentScreen() {
                     style={styles.retryButton}
                     onPress={fetchAppointments}
                   >
-                    <Text style={styles.retryButtonText}>다시 시도</Text>
+                    <Text style={styles.retryButtonText}>Try again</Text>
                   </TouchableOpacity>
                 </View>
               ) : appointments.length === 0 ? (
                 <View style={styles.emptyContainer}>
                   <Icon name="event" size={48} color="#9ca3af" />
-                  <Text style={styles.emptyMessage}>예약 내역이 없습니다.</Text>
+                  <Text style={styles.emptyMessage}>No appointments.</Text>
                 </View>
               ) : (
                 <View style={styles.appointmentList}>
@@ -1090,7 +1090,7 @@ export default function AppointmentScreen() {
                             {appointment.appointment_date} {appointment.appointment_time ? appointment.appointment_time.substring(0, 5) : ''}
                           </Text>
                           {appointment.symptoms && (
-                            <Text style={styles.appointmentSymptoms}>증상: {appointment.symptoms}</Text>
+                            <Text style={styles.appointmentSymptoms}>Symptoms: {appointment.symptoms}</Text>
                           )}
             </View>
           </View>

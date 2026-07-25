@@ -91,19 +91,19 @@ export default function CartReviewScreen({ route, navigation }) {
   const openCheckout = async () => {
     const url = result && result.checkout_url;
     if (!isSafeCheckoutUrl(url)) {
-      setOpenError('결제 페이지 주소를 확인할 수 없어요.');
+      setOpenError("We couldn't verify the checkout page address.");
       return;
     }
     try {
       const can = await Linking.canOpenURL(url);
       if (!can) {
-        setOpenError('결제 페이지를 열 수 없어요.');
+        setOpenError("We couldn't open the checkout page.");
         return;
       }
       await Linking.openURL(url);
     } catch (e) {
       // URL 문자열은 로그하지 않는다.
-      setOpenError('결제 페이지를 여는 중 문제가 발생했어요.');
+      setOpenError('Something went wrong while opening the checkout page.');
     }
   };
 
@@ -122,28 +122,28 @@ export default function CartReviewScreen({ route, navigation }) {
     return (
       <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.content}>
-          <Text style={styles.title}>장바구니가 준비됐어요</Text>
+          <Text style={styles.title}>Your cart is ready</Text>
 
           {amount !== null ? (
             <View style={styles.card}>
-              <Text style={styles.totalLabel}>예상 결제 금액</Text>
+              <Text style={styles.totalLabel}>Estimated total</Text>
               <Text style={styles.totalAmount}>
                 {amount} {currency}
               </Text>
               {isEstimated && (
-                <Text style={styles.totalNote}>예상 금액이며 결제 단계에서 달라질 수 있어요.</Text>
+                <Text style={styles.totalNote}>This is an estimate and may change at checkout.</Text>
               )}
               {!!disclaimer && <Text style={styles.disclaimer}>{disclaimer}</Text>}
             </View>
           ) : (
             <View style={styles.card}>
-              <Text style={styles.totalNote}>금액 정보를 불러오지 못했어요.</Text>
+              <Text style={styles.totalNote}>We couldn't load the price information.</Text>
             </View>
           )}
 
           {hasWarnings && (
             <Text style={styles.warnNote}>
-              일부 상품은 결제 페이지에서 다시 확인이 필요할 수 있어요.
+              Some items may need to be reviewed again on the checkout page.
             </Text>
           )}
 
@@ -153,10 +153,10 @@ export default function CartReviewScreen({ route, navigation }) {
         <View style={styles.footer}>
           {checkoutOpenable ? (
             <TouchableOpacity style={styles.primaryButton} onPress={openCheckout}>
-              <Text style={styles.primaryButtonText}>결제 진행</Text>
+              <Text style={styles.primaryButtonText}>Proceed to checkout</Text>
             </TouchableOpacity>
           ) : (
-            <Text style={styles.errorText}>결제 페이지를 여는 중 문제가 발생했어요.</Text>
+            <Text style={styles.errorText}>Something went wrong while opening the checkout page.</Text>
           )}
         </View>
       </View>
@@ -166,14 +166,14 @@ export default function CartReviewScreen({ route, navigation }) {
   // 오류 상태
   if (phase === 'error') {
     const code = error && error.code;
-    const message = (error && error.message) || '문제가 발생했어요.';
+    const message = (error && error.message) || 'Something went wrong.';
     const isStale = code === 'PRODUCT_PROPOSAL_STALE';
     const canRetry = RETRY_SAME_KEY_CODES.has(code);
 
     return (
       <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.content}>
-          <Text style={styles.title}>장바구니를 만들지 못했어요</Text>
+          <Text style={styles.title}>We couldn't create your cart</Text>
           <Text style={styles.errorText}>{message}</Text>
         </ScrollView>
         <View style={styles.footer}>
@@ -191,16 +191,16 @@ export default function CartReviewScreen({ route, navigation }) {
                 })
               }
             >
-              <Text style={styles.primaryButtonText}>추천 다시 보기</Text>
+              <Text style={styles.primaryButtonText}>View recommendations again</Text>
             </TouchableOpacity>
           )}
           {canRetry && (
             <TouchableOpacity style={styles.primaryButton} onPress={submitCart}>
-              <Text style={styles.primaryButtonText}>다시 시도</Text>
+              <Text style={styles.primaryButtonText}>Try again</Text>
             </TouchableOpacity>
           )}
           <TouchableOpacity style={styles.secondaryButton} onPress={() => navigation.goBack()}>
-            <Text style={styles.secondaryButtonText}>돌아가기</Text>
+            <Text style={styles.secondaryButtonText}>Go back</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -212,15 +212,15 @@ export default function CartReviewScreen({ route, navigation }) {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.title}>장바구니 확인</Text>
+        <Text style={styles.title}>Review cart</Text>
         <Text style={styles.subtitle}>
-          아래 상품으로 Shopify 장바구니를 만들어요. 가격은 장바구니 생성 후에 확인할 수 있어요.
+          We'll create a Shopify cart with the items below. Prices are available after the cart is created.
         </Text>
 
         {selectedItems.map((it) => (
           <View key={it.product_key} style={styles.reviewRow}>
             <Text style={styles.reviewName}>{it.display_name}</Text>
-            <Text style={styles.reviewQty}>수량 {it.quantity}</Text>
+            <Text style={styles.reviewQty}>Qty {it.quantity}</Text>
           </View>
         ))}
       </ScrollView>
@@ -234,7 +234,7 @@ export default function CartReviewScreen({ route, navigation }) {
           {submitting ? (
             <ActivityIndicator color="#ffffff" />
           ) : (
-            <Text style={styles.primaryButtonText}>Shopify 장바구니 만들기</Text>
+            <Text style={styles.primaryButtonText}>Create Shopify cart</Text>
           )}
         </TouchableOpacity>
       </View>

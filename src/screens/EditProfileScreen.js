@@ -41,7 +41,7 @@ const EditProfileScreen = ({ navigation, onProfileUpdate }) => {
       }
     } catch (error) {
       console.error('사용자 정보 로드 오류:', error);
-      Alert.alert('오류', '사용자 정보를 불러오는 중 오류가 발생했습니다.');
+      Alert.alert('Error', 'An error occurred while loading your information.');
     } finally {
       setLoading(false);
     }
@@ -55,7 +55,7 @@ const EditProfileScreen = ({ navigation, onProfileUpdate }) => {
     }
 
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = '올바른 이메일 형식이 아닙니다.';
+      newErrors.email = 'Invalid email format.';
     }
 
     setErrors(newErrors);
@@ -71,7 +71,7 @@ const EditProfileScreen = ({ navigation, onProfileUpdate }) => {
     try {
       const user = await getCurrentUser();
       if (!user || !user.id) {
-        Alert.alert('오류', '사용자 정보를 찾을 수 없습니다.');
+        Alert.alert('Error', 'User information not found.');
         return;
       }
 
@@ -92,9 +92,9 @@ const EditProfileScreen = ({ navigation, onProfileUpdate }) => {
         };
         await setUser(updatedUser);
 
-        Alert.alert('성공', '회원정보가 수정되었습니다.', [
+        Alert.alert('Success', 'Your information has been updated.', [
           {
-            text: '확인',
+            text: 'OK',
             onPress: () => {
               if (onProfileUpdate) {
                 onProfileUpdate(updatedUser);
@@ -107,17 +107,17 @@ const EditProfileScreen = ({ navigation, onProfileUpdate }) => {
         ]);
       }
     } catch (error) {
-      let errorMessage = '회원정보 수정 중 오류가 발생했습니다.';
-      
+      let errorMessage = 'An error occurred while updating your information.';
+
       if (error.status === 400) {
-        errorMessage = error.message || '입력 정보를 확인해주세요.';
+        errorMessage = error.message || 'Please check your information.';
       } else if (error.status === 404) {
-        errorMessage = '사용자를 찾을 수 없습니다.';
+        errorMessage = 'User not found.';
       } else if (error.message) {
         errorMessage = error.message;
       }
 
-      Alert.alert('오류', errorMessage);
+      Alert.alert('Error', errorMessage);
     } finally {
       setSaving(false);
     }
@@ -150,7 +150,7 @@ const EditProfileScreen = ({ navigation, onProfileUpdate }) => {
         >
           <Text style={styles.backButtonText}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>회원정보 수정</Text>
+        <Text style={styles.headerTitle}>Edit profile</Text>
         <View style={styles.placeholder} />
       </View>
 
@@ -160,10 +160,10 @@ const EditProfileScreen = ({ navigation, onProfileUpdate }) => {
       >
         <View style={styles.content}>
           <View style={styles.section}>
-            <Text style={styles.label}>이름</Text>
+            <Text style={styles.label}>Name</Text>
             <TextInput
               style={[styles.input, errors.name && styles.inputError]}
-              placeholder="이름"
+              placeholder="Name"
               value={formData.name}
               onChangeText={(value) => updateField('name', value)}
               editable={!saving}
@@ -174,10 +174,10 @@ const EditProfileScreen = ({ navigation, onProfileUpdate }) => {
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.label}>전화번호</Text>
+            <Text style={styles.label}>Phone</Text>
             <TextInput
               style={[styles.input, errors.phone && styles.inputError]}
-              placeholder="전화번호"
+              placeholder="Phone"
               value={formData.phone}
               onChangeText={(value) => updateField('phone', value)}
               keyboardType="phone-pad"
@@ -189,10 +189,10 @@ const EditProfileScreen = ({ navigation, onProfileUpdate }) => {
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.label}>이메일</Text>
+            <Text style={styles.label}>Email</Text>
             <TextInput
               style={[styles.input, errors.email && styles.inputError]}
-              placeholder="이메일"
+              placeholder="Email"
               value={formData.email}
               onChangeText={(value) => updateField('email', value)}
               autoCapitalize="none"
@@ -213,7 +213,7 @@ const EditProfileScreen = ({ navigation, onProfileUpdate }) => {
             {saving ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.buttonText}>저장</Text>
+              <Text style={styles.buttonText}>Save</Text>
             )}
           </TouchableOpacity>
         </View>

@@ -35,11 +35,11 @@ async function agentFetch(method, endpoint, { body, idempotencyKey, timeoutMs = 
   const token = getToken();
   if (!token) {
     // 토큰 미설정: 네트워크 요청을 보내지 않고 안전한 설정 오류를 던진다(값 비노출).
-    throw makeAgentError(0, 'AGENT_TOKEN_MISSING', 'Agent 데모 토큰이 설정되지 않았습니다. 개발 설정을 확인해 주세요.');
+    throw makeAgentError(0, 'AGENT_TOKEN_MISSING', 'The agent demo token is not configured. Please check your development settings.');
   }
   const baseUrl = getBaseUrl();
   if (!baseUrl) {
-    throw makeAgentError(0, 'API_BASE_URL_MISSING', 'API 기본 주소가 설정되지 않았습니다. 개발 설정을 확인해 주세요.');
+    throw makeAgentError(0, 'API_BASE_URL_MISSING', 'The API base URL is not configured. Please check your development settings.');
   }
 
   const url = `${baseUrl}${endpoint}`;
@@ -71,10 +71,10 @@ async function agentFetch(method, endpoint, { body, idempotencyKey, timeoutMs = 
   } catch (error) {
     clearTimeout(timeoutId);
     if (error && error.name === 'AbortError') {
-      throw makeAgentError(408, 'AGENT_TIMEOUT', '응답이 지연되고 있어요. 다시 시도해 주세요.');
+      throw makeAgentError(408, 'AGENT_TIMEOUT', 'The response is taking a while. Please try again.');
     }
     // 네트워크 오류. 자동 재시도하지 않는다.
-    throw makeAgentError(0, 'NETWORK_ERROR', '네트워크 연결을 확인해 주세요.');
+    throw makeAgentError(0, 'NETWORK_ERROR', 'Please check your network connection.');
   }
   clearTimeout(timeoutId);
 
@@ -82,11 +82,11 @@ async function agentFetch(method, endpoint, { body, idempotencyKey, timeoutMs = 
   try {
     json = await response.json();
   } catch (e) {
-    throw makeAgentError(response.status || 0, 'INVALID_RESPONSE', '일시적인 오류가 발생했어요. 다시 시도해 주세요.');
+    throw makeAgentError(response.status || 0, 'INVALID_RESPONSE', 'A temporary error occurred. Please try again.');
   }
 
   if (!json || typeof json !== 'object') {
-    throw makeAgentError(response.status || 0, 'INVALID_RESPONSE', '일시적인 오류가 발생했어요. 다시 시도해 주세요.');
+    throw makeAgentError(response.status || 0, 'INVALID_RESPONSE', 'A temporary error occurred. Please try again.');
   }
 
   // 2xx + success:true 만 성공으로 취급한다. data 만 반환(내부 비밀 필드는 백엔드가 이미 제외).
@@ -95,7 +95,7 @@ async function agentFetch(method, endpoint, { body, idempotencyKey, timeoutMs = 
   }
 
   const errorCode = typeof json.error_code === 'string' ? json.error_code : null;
-  const message = typeof json.message === 'string' ? json.message : '요청 처리 중 오류가 발생했습니다.';
+  const message = typeof json.message === 'string' ? json.message : 'An error occurred while processing the request.';
   throw makeAgentError(response.status || 0, errorCode, message, {
     cartRequestId: typeof json.cart_request_id === 'string' ? json.cart_request_id : undefined,
   });

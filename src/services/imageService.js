@@ -63,7 +63,7 @@ export const uploadImage = async (file, options = {}, onProgress = null) => {
 
     throw {
       status: error.status || 500,
-      message: error.message || getErrorMessage(error.status, '이미지 업로드'),
+      message: error.message || getErrorMessage(error.status, 'image upload'),
       data: error.data || null,
     };
   }
@@ -78,7 +78,7 @@ export const getImageStatus = async imageId => {
   } catch (error) {
     throw {
       status: error.status || 500,
-      message: getErrorMessage(error.status, '분석 상태 조회'),
+      message: getErrorMessage(error.status, 'analysis status check'),
       data: error.data || null,
     };
   }
@@ -93,7 +93,7 @@ export const getImageAnalysis = async imageId => {
   } catch (error) {
     throw {
       status: error.status || 500,
-      message: getErrorMessage(error.status, '분석 결과 조회'),
+      message: getErrorMessage(error.status, 'analysis result retrieval'),
       data: error.data || null,
     };
   }
@@ -114,7 +114,7 @@ export const getUserImages = async (userId, options = {}) => {
   } catch (error) {
     throw {
       status: error.status || 500,
-      message: getErrorMessage(error.status, '이미지 목록 조회'),
+      message: getErrorMessage(error.status, 'image list retrieval'),
       data: error.data || null,
     };
   }
@@ -129,7 +129,7 @@ export const deleteImage = async imageId => {
   } catch (error) {
     throw {
       status: error.status || 500,
-      message: getErrorMessage(error.status, '이미지 삭제'),
+      message: getErrorMessage(error.status, 'image deletion'),
       data: error.data || null,
     };
   }
@@ -162,7 +162,7 @@ export const pollAnalysisStatus = async (imageId, options = {}) => {
         if (status === 'failed') {
           reject({
             status: 500,
-            message: '분석에 실패했습니다. 다시 시도해주세요.',
+            message: 'Analysis failed. Please try again.',
             data: statusResponse.data,
           });
           return;
@@ -171,7 +171,7 @@ export const pollAnalysisStatus = async (imageId, options = {}) => {
         if (attempts >= maxAttempts) {
           reject({
             status: 408,
-            message: '분석 시간이 초과되었습니다. 잠시 후 다시 확인해주세요.',
+            message: 'Analysis timed out. Please check back in a moment.',
             data: statusResponse.data,
           });
           return;
@@ -196,7 +196,7 @@ export const getHistoryAnalysis = async historyId => {
   } catch (error) {
     throw {
       status: error.status || 500,
-      message: getErrorMessage(error.status, '분석 결과 조회'),
+      message: getErrorMessage(error.status, 'analysis result retrieval'),
       data: error.data || null,
     };
   }
@@ -211,7 +211,7 @@ export const getUserHistories = async userId => {
   } catch (error) {
     throw {
       status: error.status || 500,
-      message: getErrorMessage(error.status, '히스토리 목록 조회'),
+      message: getErrorMessage(error.status, 'history list retrieval'),
       data: error.data || null,
     };
   }
@@ -262,7 +262,7 @@ export const pollHistoryAnalysisStatus = async (historyId, options = {}) => {
         if (anyFailed) {
           reject({
             status: 500,
-            message: '일부 이미지의 분석에 실패했습니다.',
+            message: 'Analysis failed for some images.',
             data: response.data,
           });
           return;
@@ -271,7 +271,7 @@ export const pollHistoryAnalysisStatus = async (historyId, options = {}) => {
         if (attempts >= maxAttempts) {
           reject({
             status: 408,
-            message: '분석 시간이 초과되었습니다. 잠시 후 다시 확인해주세요.',
+            message: 'Analysis timed out. Please check back in a moment.',
             data: response.data,
           });
           return;
@@ -293,20 +293,20 @@ export const pollHistoryAnalysisStatus = async (historyId, options = {}) => {
 const getErrorMessage = (status, action) => {
   switch (status) {
     case 400:
-      return `${action} 요청이 잘못되었습니다.`;
+      return `Invalid ${action} request.`;
     case 401:
-      return '인증이 필요합니다.';
+      return 'Authentication is required.';
     case 403:
-      return '접근 권한이 없습니다.';
+      return 'You do not have access permission.';
     case 404:
-      return '요청한 리소스를 찾을 수 없습니다.';
+      return 'The requested resource was not found.';
     case 408:
-      return '요청 시간이 초과되었습니다.';
+      return 'The request timed out.';
     case 500:
-      return '서버 오류가 발생했습니다.';
+      return 'A server error occurred.';
     case 503:
-      return '서비스를 사용할 수 없습니다.';
+      return 'The service is unavailable.';
     default:
-      return `${action} 중 오류가 발생했습니다.`;
+      return `An error occurred during ${action}.`;
   }
 };

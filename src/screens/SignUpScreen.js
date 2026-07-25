@@ -28,29 +28,29 @@ const SignUpScreen = ({ onSignUpComplete, onBackToLogin }) => {
     const newErrors = {};
 
     if (!formData.username.trim()) {
-      newErrors.username = '아이디를 입력해주세요.';
+      newErrors.username = 'Please enter a username.';
     } else if (formData.username.length < 3) {
-      newErrors.username = '아이디는 3자 이상이어야 합니다.';
+      newErrors.username = 'Username must be at least 3 characters.';
     }
 
     if (!formData.password) {
-      newErrors.password = '비밀번호를 입력해주세요.';
+      newErrors.password = 'Please enter a password.';
     } else if (formData.password.length < 6) {
-      newErrors.password = '비밀번호는 6자 이상이어야 합니다.';
+      newErrors.password = 'Password must be at least 6 characters.';
     }
 
     if (!formData.passwordConfirm) {
-      newErrors.passwordConfirm = '비밀번호 확인을 입력해주세요.';
+      newErrors.passwordConfirm = 'Please confirm your password.';
     } else if (formData.password !== formData.passwordConfirm) {
-      newErrors.passwordConfirm = '비밀번호가 일치하지 않습니다.';
+      newErrors.passwordConfirm = 'Passwords do not match.';
     }
 
     if (!formData.name.trim()) {
-      newErrors.name = '이름을 입력해주세요.';
+      newErrors.name = 'Please enter your name.';
     }
 
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = '올바른 이메일 형식이 아닙니다.';
+      newErrors.email = 'Invalid email format.';
     }
 
     setErrors(newErrors);
@@ -71,9 +71,9 @@ const SignUpScreen = ({ onSignUpComplete, onBackToLogin }) => {
       const response = await register(signUpData);
       
       if (response.success) {
-        Alert.alert('성공', '회원가입이 완료되었습니다.', [
+        Alert.alert('Success', 'Sign up complete.', [
           {
-            text: '확인',
+            text: 'OK',
             onPress: () => {
               // 회원가입 완료 후 로그인 상태로 전환
               if (onSignUpComplete) {
@@ -85,17 +85,17 @@ const SignUpScreen = ({ onSignUpComplete, onBackToLogin }) => {
       }
     } catch (error) {
       console.error('회원가입 오류:', error);
-      let errorMessage = '회원가입 중 오류가 발생했습니다.';
-      
+      let errorMessage = 'An error occurred during sign up.';
+
       if (error.status === 409) {
-        errorMessage = error.message || '이미 사용 중인 아이디입니다.';
+        errorMessage = error.message || 'This username is already taken.';
       } else if (error.status === 400) {
-        errorMessage = error.message || '입력 정보를 확인해주세요.';
+        errorMessage = error.message || 'Please check your information.';
       } else if (error.message) {
         errorMessage = error.message;
       }
-      
-      Alert.alert('오류', errorMessage);
+
+      Alert.alert('Error', errorMessage);
     } finally {
       setLoading(false);
     }
@@ -116,11 +116,11 @@ const SignUpScreen = ({ onSignUpComplete, onBackToLogin }) => {
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.content}>
-          <Text style={styles.title}>회원가입</Text>
+          <Text style={styles.title}>Sign up</Text>
 
           <TextInput
             style={[styles.input, errors.username && styles.inputError]}
-            placeholder="아이디 *"
+            placeholder="Username *"
             value={formData.username}
             onChangeText={(value) => updateField('username', value)}
             autoCapitalize="none"
@@ -133,7 +133,7 @@ const SignUpScreen = ({ onSignUpComplete, onBackToLogin }) => {
 
           <TextInput
             style={[styles.input, errors.password && styles.inputError]}
-            placeholder="비밀번호 *"
+            placeholder="Password *"
             value={formData.password}
             onChangeText={(value) => updateField('password', value)}
             autoCapitalize="none"
@@ -149,7 +149,7 @@ const SignUpScreen = ({ onSignUpComplete, onBackToLogin }) => {
 
           <TextInput
             style={[styles.input, errors.passwordConfirm && styles.inputError]}
-            placeholder="비밀번호 확인 *"
+            placeholder="Confirm password *"
             value={formData.passwordConfirm}
             onChangeText={(value) => updateField('passwordConfirm', value)}
             autoCapitalize="none"
@@ -165,7 +165,7 @@ const SignUpScreen = ({ onSignUpComplete, onBackToLogin }) => {
 
           <TextInput
             style={[styles.input, errors.name && styles.inputError]}
-            placeholder="이름 *"
+            placeholder="Name *"
             value={formData.name}
             onChangeText={(value) => updateField('name', value)}
             editable={!loading}
@@ -176,7 +176,7 @@ const SignUpScreen = ({ onSignUpComplete, onBackToLogin }) => {
 
           <TextInput
             style={[styles.input, errors.phone && styles.inputError]}
-            placeholder="전화번호 (선택)"
+            placeholder="Phone (optional)"
             value={formData.phone}
             onChangeText={(value) => updateField('phone', value)}
             keyboardType="phone-pad"
@@ -188,7 +188,7 @@ const SignUpScreen = ({ onSignUpComplete, onBackToLogin }) => {
 
           <TextInput
             style={[styles.input, errors.email && styles.inputError]}
-            placeholder="이메일 (선택)"
+            placeholder="Email (optional)"
             value={formData.email}
             onChangeText={(value) => updateField('email', value)}
             autoCapitalize="none"
@@ -208,7 +208,7 @@ const SignUpScreen = ({ onSignUpComplete, onBackToLogin }) => {
             {loading ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.buttonText}>회원가입</Text>
+              <Text style={styles.buttonText}>Sign up</Text>
             )}
           </TouchableOpacity>
 
@@ -217,7 +217,7 @@ const SignUpScreen = ({ onSignUpComplete, onBackToLogin }) => {
             onPress={onBackToLogin}
             disabled={loading}
           >
-            <Text style={styles.linkText}>이미 계정이 있으신가요? 로그인</Text>
+            <Text style={styles.linkText}>Already have an account? Log in</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

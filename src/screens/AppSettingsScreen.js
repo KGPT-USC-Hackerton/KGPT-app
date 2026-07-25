@@ -15,7 +15,7 @@ import { get } from '../services/api';
 export default function AppSettingsScreen({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [appVersion, setAppVersion] = useState('1.2.3');
-  const [language, setLanguage] = useState('한국어');
+  const [language, setLanguage] = useState('English');
 
   useEffect(() => {
     loadAppSettings();
@@ -44,14 +44,14 @@ export default function AppSettingsScreen({ navigation }) {
 
   const handleClearCache = () => {
     Alert.alert(
-      '캐시 삭제',
-      '앱 캐시를 삭제하시겠습니까?',
+      'Clear cache',
+      'Do you want to clear the app cache?',
       [
-        { text: '취소', style: 'cancel' },
+        { text: 'Cancel', style: 'cancel' },
         {
-          text: '삭제',
+          text: 'Delete',
           onPress: () => {
-            Alert.alert('완료', '캐시가 삭제되었습니다.');
+            Alert.alert('Done', 'The cache has been cleared.');
           },
         },
       ]
@@ -59,7 +59,7 @@ export default function AppSettingsScreen({ navigation }) {
   };
 
   const handleCheckUpdate = () => {
-    Alert.alert('알림', '최신 버전입니다.');
+    Alert.alert('Notice', 'You are on the latest version.');
   };
 
   if (loading) {
@@ -72,7 +72,7 @@ export default function AppSettingsScreen({ navigation }) {
           >
             <Text style={styles.backButtonText}>←</Text>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>앱 설정</Text>
+          <Text style={styles.headerTitle}>App Settings</Text>
           <View style={styles.placeholder} />
         </View>
         <View style={styles.loadingContainer}>
@@ -91,18 +91,18 @@ export default function AppSettingsScreen({ navigation }) {
         >
           <Text style={styles.backButtonText}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>앱 설정</Text>
+        <Text style={styles.headerTitle}>App Settings</Text>
         <View style={styles.placeholder} />
       </View>
 
       <ScrollView style={styles.content}>
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>일반 설정</Text>
+          <Text style={styles.sectionTitle}>General</Text>
           <View style={styles.settingsCard}>
             <View style={styles.settingItem}>
               <View style={styles.settingLeft}>
                 <Text style={styles.settingIcon}>🌐</Text>
-                <Text style={styles.settingText}>언어</Text>
+                <Text style={styles.settingText}>Language</Text>
               </View>
               <View style={styles.valueContainer}>
                 <Text style={styles.valueText}>{language}</Text>
@@ -113,10 +113,10 @@ export default function AppSettingsScreen({ navigation }) {
             <View style={styles.settingItem}>
               <View style={styles.settingLeft}>
                 <Text style={styles.settingIcon}>🎨</Text>
-                <Text style={styles.settingText}>테마</Text>
+                <Text style={styles.settingText}>Theme</Text>
               </View>
               <View style={styles.valueContainer}>
-                <Text style={styles.valueText}>라이트</Text>
+                <Text style={styles.valueText}>Light</Text>
                 <Text style={styles.arrow}>→</Text>
               </View>
             </View>
@@ -124,7 +124,7 @@ export default function AppSettingsScreen({ navigation }) {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>데이터 관리</Text>
+          <Text style={styles.sectionTitle}>Data Management</Text>
           <View style={styles.settingsCard}>
             <TouchableOpacity
               style={styles.settingItem}
@@ -132,18 +132,18 @@ export default function AppSettingsScreen({ navigation }) {
             >
               <View style={styles.settingLeft}>
                 <Text style={styles.settingIcon}>🗑️</Text>
-                <Text style={styles.settingText}>캐시 삭제</Text>
+                <Text style={styles.settingText}>Clear cache</Text>
               </View>
               <Text style={styles.arrow}>→</Text>
             </TouchableOpacity>
             <View style={styles.divider} />
             <TouchableOpacity
               style={styles.settingItem}
-              onPress={() => Alert.alert('알림', '데이터 백업 기능은 준비 중입니다.')}
+              onPress={() => Alert.alert('Notice', 'Data backup is coming soon.')}
             >
               <View style={styles.settingLeft}>
                 <Text style={styles.settingIcon}>💾</Text>
-                <Text style={styles.settingText}>데이터 백업</Text>
+                <Text style={styles.settingText}>Data backup</Text>
               </View>
               <Text style={styles.arrow}>→</Text>
             </TouchableOpacity>
@@ -151,12 +151,12 @@ export default function AppSettingsScreen({ navigation }) {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>앱 정보</Text>
+          <Text style={styles.sectionTitle}>App Info</Text>
           <View style={styles.settingsCard}>
             <View style={styles.settingItem}>
               <View style={styles.settingLeft}>
                 <Text style={styles.settingIcon}>ℹ️</Text>
-                <Text style={styles.settingText}>앱 버전</Text>
+                <Text style={styles.settingText}>App version</Text>
               </View>
               <Text style={styles.valueText}>{appVersion}</Text>
             </View>
@@ -167,7 +167,7 @@ export default function AppSettingsScreen({ navigation }) {
             >
               <View style={styles.settingLeft}>
                 <Text style={styles.settingIcon}>🔄</Text>
-                <Text style={styles.settingText}>업데이트 확인</Text>
+                <Text style={styles.settingText}>Check for updates</Text>
               </View>
               <Text style={styles.arrow}>→</Text>
             </TouchableOpacity>
@@ -178,7 +178,7 @@ export default function AppSettingsScreen({ navigation }) {
             >
               <View style={styles.settingLeft}>
                 <Text style={styles.settingIcon}>📄</Text>
-                <Text style={styles.settingText}>서비스 약관</Text>
+                <Text style={styles.settingText}>Terms of Service</Text>
               </View>
               <Text style={styles.arrow}>→</Text>
             </TouchableOpacity>
@@ -189,7 +189,7 @@ export default function AppSettingsScreen({ navigation }) {
             >
               <View style={styles.settingLeft}>
                 <Text style={styles.settingIcon}>🔒</Text>
-                <Text style={styles.settingText}>개인정보처리방침</Text>
+                <Text style={styles.settingText}>Privacy Policy</Text>
               </View>
               <Text style={styles.arrow}>→</Text>
             </TouchableOpacity>
@@ -197,7 +197,7 @@ export default function AppSettingsScreen({ navigation }) {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>지원</Text>
+          <Text style={styles.sectionTitle}>Support</Text>
           <View style={styles.settingsCard}>
             <TouchableOpacity
               style={styles.settingItem}
@@ -205,18 +205,18 @@ export default function AppSettingsScreen({ navigation }) {
             >
               <View style={styles.settingLeft}>
                 <Text style={styles.settingIcon}>❓</Text>
-                <Text style={styles.settingText}>도움말</Text>
+                <Text style={styles.settingText}>Help</Text>
               </View>
               <Text style={styles.arrow}>→</Text>
             </TouchableOpacity>
             <View style={styles.divider} />
             <TouchableOpacity
               style={styles.settingItem}
-              onPress={() => Alert.alert('알림', '문의하기 기능은 준비 중입니다.')}
+              onPress={() => Alert.alert('Notice', 'Contact us is coming soon.')}
             >
               <View style={styles.settingLeft}>
                 <Text style={styles.settingIcon}>📧</Text>
-                <Text style={styles.settingText}>문의하기</Text>
+                <Text style={styles.settingText}>Contact us</Text>
               </View>
               <Text style={styles.arrow}>→</Text>
             </TouchableOpacity>

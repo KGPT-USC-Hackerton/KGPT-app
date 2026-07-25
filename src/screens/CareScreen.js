@@ -19,8 +19,8 @@ import OralCareRecordComponent from '../components/OralCareRecordComponent';
 import PhotoAnalysisHistoryList from '../components/PhotoAnalysisHistoryList';
 
 const tabs = [
-  { id: 'survey', label: '설문조사' },
-  { id: 'photo', label: '구강 사진 분석' },
+  { id: 'survey', label: 'Survey' },
+  { id: 'photo', label: 'Oral photo analysis' },
 ];
 
 // 앱 나머지와 동일하게 Config(.env)의 API_BASE_URL 기준으로 백엔드 origin 도출.
@@ -93,7 +93,7 @@ export default function CareScreen({ route, navigation }) {
         const json = await res.json();
 
         if (!json.success) {
-          throw new Error(json.message || 'score_history 조회 실패');
+          throw new Error(json.message || 'Failed to load score history');
         }
 
         // 1️⃣ 원본 리스트
@@ -175,7 +175,7 @@ export default function CareScreen({ route, navigation }) {
   // [3단계] 설문 + 사진을 합쳐 통합 분석 1회 호출
   const runCombinedAnalysis = async () => {
     if (!userId || !surveySessionId || !photoHistoryId) {
-      setCombinedError('설문 또는 사진 정보가 부족합니다.');
+      setCombinedError('Survey or photo information is missing.');
       return;
     }
     setCombinedLoading(true);
@@ -197,7 +197,7 @@ export default function CareScreen({ route, navigation }) {
 
       if (!res.ok || !json.success) {
         throw new Error(
-          json.message || `통합 분석 API 에러 (status ${res.status})`,
+          json.message || `Combined analysis API error (status ${res.status})`,
         );
       }
 
@@ -207,7 +207,7 @@ export default function CareScreen({ route, navigation }) {
     } catch (error) {
       console.error('통합 분석 오류:', error);
       setCombinedError(
-        error.message || '통합 분석 중 문제가 발생했습니다.',
+        error.message || 'A problem occurred during the combined analysis.',
       );
     } finally {
       setCombinedLoading(false);
@@ -299,17 +299,18 @@ export default function CareScreen({ route, navigation }) {
                 <Text style={styles.cardIconText}>🦷</Text>
               </View>
               <Text style={styles.cardTitle}>
-                구강 건강 통합 분석을 시작해보세요
+                Start your combined oral health analysis
               </Text>
               <Text style={styles.cardSubtitle}>
-                ① 설문조사와 ② 구강 사진 촬영을 마치면, 두 결과를 종합한 맞춤형
-                분석과 관리 추천을 한 번에 받아볼 수 있어요.
+                Once you complete ① the survey and ② the oral photos, you'll get
+                a personalized analysis and care recommendations based on both
+                results, all at once.
               </Text>
               <TouchableOpacity
                 style={styles.primaryButton}
                 onPress={() => setStep('survey')}
               >
-                <Text style={styles.primaryButtonText}>시작하기</Text>
+                <Text style={styles.primaryButtonText}>Get started</Text>
               </TouchableOpacity>
             </View>
 
@@ -318,17 +319,17 @@ export default function CareScreen({ route, navigation }) {
               {recordsLoading && (
                 <View style={styles.historyLoading}>
                   <ActivityIndicator size="small" color="#2563eb" />
-                  <Text style={styles.historyLoadingText}>불러오는 중...</Text>
+                  <Text style={styles.historyLoadingText}>Loading...</Text>
                 </View>
               )}
               {!recordsLoading && recordsError && (
                 <Text style={styles.historyErrorText}>
-                  기록을 불러오는 중 오류가 발생했습니다.
+                  An error occurred while loading your records.
                 </Text>
               )}
               {!recordsLoading && !recordsError && records.length === 0 && (
                 <Text style={styles.historyEmptyText}>
-                  아직 기록이 없어요. 설문과 촬영을 완료하면 이곳에 기록이 쌓여요.
+                  No records yet. Once you complete a survey and photos, your records will appear here.
                 </Text>
               )}
               {!recordsLoading && !recordsError && records.length > 0 && (
@@ -358,7 +359,7 @@ export default function CareScreen({ route, navigation }) {
           <View style={styles.section}>
             <View style={styles.stepHintBox}>
               <Text style={styles.stepHintText}>
-                설문이 완료되었어요. 이제 윗니·아랫니·앞니 3장을 촬영해 주세요.
+                The survey is complete. Now take 3 photos: upper teeth, lower teeth, and front teeth.
               </Text>
             </View>
             <PhotoAnalysisComponent
@@ -376,26 +377,26 @@ export default function CareScreen({ route, navigation }) {
               <View style={styles.card}>
                 <ActivityIndicator size="large" color="#2563eb" />
                 <Text style={styles.processingText}>
-                  설문과 사진을 종합 분석 중입니다...
+                  Analyzing your survey and photos together...
                 </Text>
               </View>
             )}
 
             {!combinedLoading && combinedError && (
               <View style={styles.card}>
-                <Text style={styles.cardTitle}>분석에 실패했어요</Text>
+                <Text style={styles.cardTitle}>Analysis failed</Text>
                 <Text style={styles.cardSubtitle}>{combinedError}</Text>
                 <TouchableOpacity
                   style={styles.primaryButton}
                   onPress={runCombinedAnalysis}
                 >
-                  <Text style={styles.primaryButtonText}>다시 시도</Text>
+                  <Text style={styles.primaryButtonText}>Try again</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.secondaryButton}
                   onPress={restartFlow}
                 >
-                  <Text style={styles.secondaryButtonText}>처음부터 다시</Text>
+                  <Text style={styles.secondaryButtonText}>Start over</Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -418,9 +419,9 @@ export default function CareScreen({ route, navigation }) {
 
 // 상단 진행 단계 정의
 const WIZARD_STEPS = [
-  { key: 'survey', label: '설문' },
-  { key: 'photo', label: '구강 촬영' },
-  { key: 'result', label: '통합 분석' },
+  { key: 'survey', label: 'Survey' },
+  { key: 'photo', label: 'Oral photos' },
+  { key: 'result', label: 'Analysis' },
 ];
 
 // 통합 분석 결과 렌더링
@@ -449,7 +450,7 @@ function CombinedResultView({ result, images = [], onRestart }) {
 
   const BulletList = ({ items }) =>
     (items || []).length === 0 ? (
-      <Text style={styles.resultText}>해당 사항 없음</Text>
+      <Text style={styles.resultText}>None</Text>
     ) : (
       items.map((it, idx) => (
         <View key={idx} style={styles.bulletRow}>
@@ -460,13 +461,13 @@ function CombinedResultView({ result, images = [], onRestart }) {
     );
 
   const photoParts = [
-    ['윗니', photo.upper],
-    ['아랫니', photo.lower],
-    ['앞니', photo.front],
+    ['Upper teeth', photo.upper],
+    ['Lower teeth', photo.lower],
+    ['Front teeth', photo.front],
   ].filter(([, v]) => v);
 
   // 분석 결과 사진(충치 표시가 렌더링된 이미지). 없으면 원본으로 대체한다.
-  const POSITION_LABELS = { upper: '윗니', lower: '아랫니', front: '앞니' };
+  const POSITION_LABELS = { upper: 'Upper teeth', lower: 'Lower teeth', front: 'Front teeth' };
   const photoCards = (images || [])
     .map(img => ({
       key: img.image_type,
@@ -480,30 +481,30 @@ function CombinedResultView({ result, images = [], onRestart }) {
     <View>
       <View style={styles.resultHeader}>
         <Text style={styles.resultHeaderIcon}>🩺</Text>
-        <Text style={styles.resultHeaderTitle}>통합 분석 결과</Text>
+        <Text style={styles.resultHeaderTitle}>Combined analysis result</Text>
       </View>
 
       {!!summary && (
-        <Section title="종합 총평">
+        <Section title="Overall summary">
           <Text style={styles.resultText}>{summary}</Text>
         </Section>
       )}
 
       {!!details && (
-        <Section title="세부 분석">
+        <Section title="Detailed analysis">
           <Text style={styles.resultText}>{details}</Text>
         </Section>
       )}
 
-      <Section title="⚠️ 위험 요인">
+      <Section title="⚠️ Risk factors">
         <BulletList items={risk_factors} />
       </Section>
 
-      <Section title="✅ 개선하면 좋은 습관">
+      <Section title="✅ Habits to improve">
         <BulletList items={improvements} />
       </Section>
 
-      <Section title="🪥 맞춤 추천">
+      <Section title="🪥 Personalized recommendations">
         <BulletList items={recommendations} />
         <TouchableOpacity
           style={[
@@ -513,20 +514,20 @@ function CombinedResultView({ result, images = [], onRestart }) {
           onPress={onOpenRecommendations}
           disabled={!canOpenRecommendations}
         >
-          <Text style={styles.primaryButtonText}>맞춤 구강관리 상품 보기</Text>
+          <Text style={styles.primaryButtonText}>View personalized oral care products</Text>
         </TouchableOpacity>
       </Section>
 
       {photoCards.length > 0 && (
-        <Section title="🦷 치아 분석 사진">
+        <Section title="🦷 Teeth analysis photos">
           <Text style={styles.photoHint}>
-            AI가 분석한 부위가 표시된 사진입니다.
+            These photos show the areas analyzed by AI.
           </Text>
           {photoCards.map(card => (
             <View key={card.key} style={styles.photoItem}>
               <Text style={styles.resultSubLabel}>
                 {card.label}
-                {!card.isAnalyzed && ' (원본)'}
+                {!card.isAnalyzed && ' (original)'}
               </Text>
               <Image
                 source={{ uri: card.url }}
@@ -539,7 +540,7 @@ function CombinedResultView({ result, images = [], onRestart }) {
       )}
 
       {(photoParts.length > 0 || photo.overall) && (
-        <Section title="📷 사진 분석 요약">
+        <Section title="📷 Photo analysis summary">
           {photoParts.map(([label, text]) => (
             <View key={label} style={{ marginBottom: 8 }}>
               <Text style={styles.resultSubLabel}>{label}</Text>
@@ -555,7 +556,7 @@ function CombinedResultView({ result, images = [], onRestart }) {
       )}
 
       <TouchableOpacity style={styles.primaryButton} onPress={onRestart}>
-        <Text style={styles.primaryButtonText}>처음부터 다시 하기</Text>
+        <Text style={styles.primaryButtonText}>Start over</Text>
       </TouchableOpacity>
     </View>
   );

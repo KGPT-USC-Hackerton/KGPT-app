@@ -27,10 +27,10 @@ import { classifyTeethRegion } from '../services/teethClassifierService';
 
 const TOTAL_IMAGES = 3;
 const POSITION_LABELS = {
-  upper: '윗니',
-  lower: '아랫니',
-  front: '앞니',
-  null: '선택 안함',
+  upper: 'Upper teeth',
+  lower: 'Lower teeth',
+  front: 'Front teeth',
+  null: 'Not selected',
 };
 
 export default function PhotoAnalysisComponent({
@@ -88,7 +88,7 @@ export default function PhotoAnalysisComponent({
     if (analysis.occlusion?.status) {
       issues.push({
         type: analysis.occlusion.status === '정상' ? 'good' : 'warning',
-        text: `교합 상태: ${analysis.occlusion.status}${
+        text: `Occlusion: ${analysis.occlusion.status}${
           analysis.occlusion.comment ? ` - ${analysis.occlusion.comment}` : ''
         }`,
       });
@@ -98,16 +98,16 @@ export default function PhotoAnalysisComponent({
     if (analysis.cavity?.detected) {
       issues.push({
         type: 'warning',
-        text: `충치 감지됨${
+        text: `Cavity detected${
           analysis.cavity.locations?.length > 0
-            ? ` (위치: ${analysis.cavity.locations.join(', ')})`
+            ? ` (location: ${analysis.cavity.locations.join(', ')})`
             : ''
         }${analysis.cavity.comment ? ` - ${analysis.cavity.comment}` : ''}`,
       });
     } else if (analysis.cavity?.detected === false) {
       issues.push({
         type: 'good',
-        text: '충치가 감지되지 않았습니다',
+        text: 'No cavities detected',
       });
     }
 
@@ -115,7 +115,7 @@ export default function PhotoAnalysisComponent({
     if (analysis.ai_confidence) {
       issues.push({
         type: 'info',
-        text: `AI 분석 신뢰도: ${analysis.ai_confidence}%`,
+        text: `AI confidence: ${analysis.ai_confidence}%`,
       });
     }
 
@@ -182,7 +182,7 @@ export default function PhotoAnalysisComponent({
 
         if (!uploadResponse.success || !uploadResponse.data?.image_id) {
           throw new Error(
-            uploadResponse.message || '이미지 업로드에 실패했습니다.',
+            uploadResponse.message || 'Failed to upload image.',
           );
         }
 
@@ -206,9 +206,9 @@ export default function PhotoAnalysisComponent({
       } catch (error) {
         console.error('이미지 업로드 오류:', error);
 
-        let errorMessage = '이미지 업로드 중 오류가 발생했습니다.';
+        let errorMessage = 'An error occurred while uploading the image.';
         if (error.status === 0) {
-          errorMessage = '네트워크 연결을 확인해주세요.';
+          errorMessage = 'Please check your network connection.';
         } else if (error.message) {
           errorMessage = error.message;
         }
@@ -261,8 +261,8 @@ export default function PhotoAnalysisComponent({
   const startAnalysis = useCallback(async () => {
     if (!allImagesReady) {
       Alert.alert(
-        '알림',
-        '윗니, 아랫니, 앞니 사진이 모두 업로드되어야 분석할 수 있습니다.',
+        'Notice',
+        'You need to upload photos of your upper teeth, lower teeth, and front teeth before analysis.',
       );
       return;
     }
@@ -274,8 +274,8 @@ export default function PhotoAnalysisComponent({
 
     if (!targetHistoryId) {
       Alert.alert(
-        '알림',
-        '현재 세트의 history_id를 찾을 수 없습니다. 다시 촬영을 시작해주세요.',
+        'Notice',
+        "Couldn't find the history_id for the current set. Please start over.",
       );
       return;
     }
@@ -302,7 +302,7 @@ export default function PhotoAnalysisComponent({
       });
 
       if (!result.success) {
-        throw new Error(result.message || '분석 결과를 가져올 수 없습니다.');
+        throw new Error(result.message || 'Unable to retrieve analysis results.');
       }
 
       setIsAnalyzing(false);
@@ -314,9 +314,9 @@ export default function PhotoAnalysisComponent({
         return;
       }
 
-      Alert.alert('분석 완료', '3장의 구강 사진 분석이 모두 완료되었습니다.', [
+      Alert.alert('Analysis complete', 'All 3 oral photos have been analyzed.', [
         {
-          text: '확인',
+          text: 'OK',
           onPress: () => {
             resetState();
           },
@@ -327,17 +327,17 @@ export default function PhotoAnalysisComponent({
       setIsAnalyzing(false);
       setUploadProgress(0);
 
-      let errorMessage = '분석 중 오류가 발생했습니다.';
+      let errorMessage = 'An error occurred during analysis.';
 
       if (error.status === 0) {
         errorMessage =
-          '네트워크 연결을 확인해주세요. 백엔드 서버가 실행 중인지 확인해주세요.';
+          'Please check your network connection. Make sure the backend server is running.';
       } else if (error.message) {
         errorMessage = error.message;
       }
 
       setPickerError(errorMessage);
-      Alert.alert('오류', errorMessage);
+      Alert.alert('Error', errorMessage);
     }
   }, [allImagesReady, images, historyId, resetState, onAnalysisComplete]);
 
@@ -394,7 +394,7 @@ export default function PhotoAnalysisComponent({
                 return { imageId: img.id, result: formattedResult };
               } else {
                 throw new Error(
-                  statusResponse.message || '분석 결과를 가져올 수 없습니다.',
+                  statusResponse.message || 'Unable to retrieve analysis results.',
                 );
               }
             })
@@ -405,7 +405,7 @@ export default function PhotoAnalysisComponent({
                     ? {
                         ...i,
                         status: 'failed',
-                        error: error.message || '분석 실패',
+                        error: error.message || 'Analysis failed',
                       }
                     : i,
                 ),
@@ -436,13 +436,13 @@ export default function PhotoAnalysisComponent({
 
           if (failedCount > 0) {
             Alert.alert(
-              '분석 완료',
+              'Analysis complete',
               `${
                 uploadedImages.length - failedCount
-              }장의 분석이 완료되었습니다. ${failedCount}장의 분석에 실패했습니다.`,
+              } photo(s) analyzed successfully. ${failedCount} photo(s) failed to analyze.`,
             );
           } else {
-            Alert.alert('분석 완료', '모든 이미지의 분석이 완료되었습니다.');
+            Alert.alert('Analysis complete', 'All images have been analyzed.');
           }
         }
       } catch (error) {
@@ -450,16 +450,16 @@ export default function PhotoAnalysisComponent({
         setIsAnalyzing(false);
         setUploadProgress(0);
 
-        let errorMessage = '분석 중 오류가 발생했습니다.';
+        let errorMessage = 'An error occurred during analysis.';
 
         if (error.status === 0) {
           errorMessage =
-            '네트워크 연결을 확인해주세요. 백엔드 서버가 실행 중인지 확인해주세요.';
+            'Please check your network connection. Make sure the backend server is running.';
         } else if (error.message) {
           errorMessage = error.message;
         } else if (error.status === 500) {
           errorMessage =
-            '서버 오류가 발생했습니다. 백엔드 서버 로그를 확인해주세요.';
+            'A server error occurred. Please check the backend server logs.';
         }
 
         setPickerError(errorMessage);
@@ -524,8 +524,8 @@ export default function PhotoAnalysisComponent({
       } catch (uploadErr) {
         console.error('이미지 업로드 오류:', uploadErr);
         Alert.alert(
-          '오류',
-          '이미지를 업로드하는 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.',
+          'Error',
+          'A problem occurred while uploading the image. Please try again in a moment.',
         );
       }
     },
@@ -541,7 +541,7 @@ export default function PhotoAnalysisComponent({
       if (response.errorCode) {
         setPickerError(
           response.errorMessage ||
-            '사진을 불러오는 중 문제가 발생했습니다. 다시 시도해주세요.',
+            'A problem occurred while loading the photo. Please try again.',
         );
         return;
       }
@@ -549,7 +549,7 @@ export default function PhotoAnalysisComponent({
       const asset = response.assets?.[0];
 
       if (!asset?.uri) {
-        setPickerError('선택한 사진의 경로를 확인할 수 없습니다.');
+        setPickerError('Unable to determine the path of the selected photo.');
         return;
       }
 
@@ -576,7 +576,7 @@ export default function PhotoAnalysisComponent({
         } catch (error) {
           console.error('launchImageLibrary error:', error);
           setPickerError(
-            '사진을 불러오는 중 오류가 발생했습니다. 다시 시도해주세요.',
+            'An error occurred while loading the photo. Please try again.',
           );
         }
       }
@@ -654,31 +654,31 @@ export default function PhotoAnalysisComponent({
     position => {
       if (images.length >= TOTAL_IMAGES) {
         Alert.alert(
-          '알림',
-          `최대 ${TOTAL_IMAGES}장의 사진만 촬영할 수 있습니다.`,
+          'Notice',
+          `You can take up to ${TOTAL_IMAGES} photos.`,
         );
         return;
       }
 
       const existingImage = images.find(img => img.position === position);
       if (existingImage) {
-        Alert.alert('알림', '이미 해당 위치의 사진이 있습니다.');
+        Alert.alert('Notice', 'A photo for this position already exists.');
         return;
       }
 
       Alert.alert(
-        '사진 선택',
-        `${POSITION_LABELS[position]} 사진을 촬영하거나 앨범에서 선택해주세요.`,
+        'Select photo',
+        `Take a photo of your ${POSITION_LABELS[position]} or choose one from your album.`,
         [
           {
-            text: '카메라로 촬영',
+            text: 'Take a photo',
             onPress: () => handleLaunch('camera', position),
           },
           {
-            text: '앨범에서 선택',
+            text: 'Choose from album',
             onPress: () => handleLaunch('library', position),
           },
-          { text: '취소', style: 'cancel' },
+          { text: 'Cancel', style: 'cancel' },
         ],
         { cancelable: true },
       );
@@ -716,7 +716,7 @@ export default function PhotoAnalysisComponent({
                 />
               </View>
               <Text style={styles.progressText}>
-                AI 분석 중... {uploadProgress.toFixed(0)}%
+                Analyzing... {uploadProgress.toFixed(0)}%
               </Text>
             </View>
           )}
@@ -725,9 +725,9 @@ export default function PhotoAnalysisComponent({
           {!allCompleted && !isPhotoSessionStarted && images.length === 0 && (
             <View style={styles.startCard}>
               <View style={styles.startCardContent}>
-                <Text style={styles.startCardTitle}>구강 사진 촬영</Text>
+                <Text style={styles.startCardTitle}>Oral photo capture</Text>
                 <Text style={styles.startCardSubtitle}>
-                  윗니, 아랫니, 앞니 사진을 촬영하여{'\n'}AI 분석을 받아보세요
+                  Take photos of your upper, lower, and front teeth{'\n'}to get an AI analysis
                 </Text>
                 <TouchableOpacity
                   onPress={() => {
@@ -737,7 +737,7 @@ export default function PhotoAnalysisComponent({
                   }}
                   style={styles.startButton}
                 >
-                  <Text style={styles.startButtonText}>촬영 시작하기</Text>
+                  <Text style={styles.startButtonText}>Start capturing</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -752,13 +752,13 @@ export default function PhotoAnalysisComponent({
                     onPress={resetState}
                     style={styles.backButton}
                   >
-                    <Text style={styles.backButtonText}>← 뒤로</Text>
+                    <Text style={styles.backButtonText}>← Back</Text>
                   </TouchableOpacity>
                 )}
                 <View style={styles.sectionTitleContainer}>
-                  <Text style={styles.sectionTitle}>구강 사진 촬영</Text>
+                  <Text style={styles.sectionTitle}>Oral photo capture</Text>
                   <Text style={styles.sectionSubtitle}>
-                    각 위치별로 사진을 촬영해주세요 ({images.length}/
+                    Take a photo for each position ({images.length}/
                     {TOTAL_IMAGES})
                   </Text>
                 </View>
@@ -789,13 +789,13 @@ export default function PhotoAnalysisComponent({
                                   style={styles.photoCardStatus}
                                 />
                                 <Text style={styles.photoCardStatusText}>
-                                  업로드 중...
+                                  Uploading...
                                 </Text>
                               </>
                             )}
                             {image.status === 'uploaded' && (
                               <Text style={styles.photoCardCheck}>
-                                ✓ 업로드 완료
+                                ✓ Uploaded
                               </Text>
                             )}
                             {image.status === 'analyzing' && (
@@ -806,18 +806,18 @@ export default function PhotoAnalysisComponent({
                                   style={styles.photoCardStatus}
                                 />
                                 <Text style={styles.photoCardStatusText}>
-                                  분석 중...
+                                  Analyzing...
                                 </Text>
                               </>
                             )}
                             {image.status === 'completed' && (
                               <Text style={styles.photoCardCheck}>
-                                ✓ 분석 완료
+                                ✓ Analyzed
                               </Text>
                             )}
                             {image.status === 'failed' && (
                               <Text style={styles.photoCardError}>
-                                ✕ {image.error || '실패'}
+                                ✕ {image.error || 'Failed'}
                               </Text>
                             )}
                           </View>
@@ -848,7 +848,7 @@ export default function PhotoAnalysisComponent({
                             {POSITION_LABELS[position]}
                           </Text>
                           <Text style={styles.positionButtonSubtext}>
-                            촬영하기
+                            Take a photo
                           </Text>
                         </TouchableOpacity>
                       )}
@@ -865,7 +865,7 @@ export default function PhotoAnalysisComponent({
               onPress={startAnalysis}
               style={styles.startAnalysisButton}
             >
-              <Text style={styles.startAnalysisButtonText}>🔍 분석하기</Text>
+              <Text style={styles.startAnalysisButtonText}>🔍 Analyze</Text>
             </TouchableOpacity>
           )}
 
@@ -873,9 +873,9 @@ export default function PhotoAnalysisComponent({
           {isAnalyzing && (
             <View style={styles.loadingSection}>
               <ActivityIndicator size="large" color="#3b82f6" />
-              <Text style={styles.loadingText}>AI 분석 중...</Text>
+              <Text style={styles.loadingText}>Analyzing...</Text>
               <Text style={styles.loadingSubtext}>
-                {uploadProgress.toFixed(0)}% 완료
+                {uploadProgress.toFixed(0)}% complete
               </Text>
             </View>
           )}
@@ -883,13 +883,13 @@ export default function PhotoAnalysisComponent({
           {/* 분석 결과 표시 */}
           {allCompleted && hasResults && (
             <View style={styles.resultsSection}>
-              <Text style={styles.resultsTitle}>분석 결과</Text>
+              <Text style={styles.resultsTitle}>Analysis results</Text>
 
               {/* 전체 요약 */}
               {images.length === TOTAL_IMAGES &&
                 images.every(img => img.analysisResult) && (
                   <View style={styles.summaryCard}>
-                    <Text style={styles.summaryTitle}>전체 요약</Text>
+                    <Text style={styles.summaryTitle}>Overall summary</Text>
                     <View style={styles.summaryScores}>
                       {images.map(img => {
                         const result = img.analysisResult;
@@ -921,7 +921,7 @@ export default function PhotoAnalysisComponent({
                         return average !== null ? (
                           <>
                             <Text style={styles.summaryAverageLabel}>
-                              평균 점수
+                              Average score
                             </Text>
                             <Text style={styles.summaryAverageValue}>
                               {average}
@@ -947,12 +947,12 @@ export default function PhotoAnalysisComponent({
                       />
                       <View style={styles.resultHeaderText}>
                         <Text style={styles.resultPosition}>
-                          {index + 1}번째 사진 -{' '}
-                          {POSITION_LABELS[img.position] || '선택 안함'}
+                          Photo {index + 1} -{' '}
+                          {POSITION_LABELS[img.position] || 'Not selected'}
                         </Text>
                         {result.score !== null && (
                           <Text style={styles.resultScore}>
-                            점수: {result.score}
+                            Score: {result.score}
                           </Text>
                         )}
                       </View>
@@ -979,7 +979,7 @@ export default function PhotoAnalysisComponent({
                       result.recommendations.length > 0 && (
                         <View style={styles.recommendationsSection}>
                           <Text style={styles.recommendationsTitle}>
-                            추천 사항
+                            Recommendations
                           </Text>
                           {result.recommendations.map((rec, recIndex) => (
                             <View
@@ -1010,7 +1010,7 @@ export default function PhotoAnalysisComponent({
           {/* 다시 시작 버튼 */}
           {allCompleted && (
             <TouchableOpacity onPress={resetState} style={styles.resetButton}>
-              <Text style={styles.resetButtonText}>다시 분석하기</Text>
+              <Text style={styles.resetButtonText}>Analyze again</Text>
             </TouchableOpacity>
           )}
         </ScrollView>

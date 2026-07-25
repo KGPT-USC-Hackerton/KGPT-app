@@ -226,7 +226,7 @@ function App() {
             name="Home"
             component={HomeScreen}
             options={{
-              title: '홈',
+              title: 'Home',
               tabBarIcon: ({ color, size }) => (
                 <Icon name="home" color={color} size={size} />
               ),
@@ -237,7 +237,7 @@ function App() {
             name="Learn"
             component={LearnScreen} // ✅ LearnNavigator → LearnScreen
             options={{
-              title: '학습',
+              title: 'Learn',
               tabBarIcon: ({ color, size }) => (
                 <Icon name="menu-book" color={color} size={size} />
               ),
@@ -248,7 +248,7 @@ function App() {
             name="Care"
             component={CareStack}
             options={{
-              title: '관리',
+              title: 'Care',
               tabBarIcon: ({ color, size }) => (
                 <Icon name="camera" color={color} size={size} />
               ),
@@ -259,7 +259,7 @@ function App() {
             name="Appointment"
             component={AppointmentScreen}
             options={{
-              title: '예약',
+              title: 'Appointment',
               tabBarIcon: ({ color, size }) => (
                 <Icon name="calendar-month" color={color} size={size} />
               ),
@@ -269,7 +269,7 @@ function App() {
           <Tab.Screen
             name="My Page"
             options={{
-              title: '마이페이지',
+              title: 'My Page',
               tabBarIcon: ({ color, size }) => (
                 <Icon name="person" color={color} size={size} />
               ),
