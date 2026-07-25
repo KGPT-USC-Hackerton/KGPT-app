@@ -232,22 +232,6 @@ export default function CareScreen({ route, navigation }) {
     setStep('intro');
   };
 
-  // 6B: 맞춤 상품 추천 화면으로 이동.
-  // photoHistoryId(=history_id)가 유효한 비어 있지 않은 문자열일 때만 이동한다.
-  // survey_session_id는 optional. user_id / 의료정보는 전달하지 않는다.
-  const canOpenRecommendations =
-    typeof photoHistoryId === 'string' && photoHistoryId.trim() !== '';
-
-  const handleOpenRecommendations = () => {
-    if (!canOpenRecommendations || !navigation) {
-      return;
-    }
-    navigation.navigate('ProductRecommendation', {
-      history_id: photoHistoryId,
-      survey_session_id: surveySessionId || undefined,
-    });
-  };
-
   const stepIndex = { intro: 0, survey: 0, photo: 1, result: 2 }[step] ?? 0;
 
   return (
@@ -406,8 +390,6 @@ export default function CareScreen({ route, navigation }) {
                 result={combinedResult}
                 images={combinedImages}
                 onRestart={restartFlow}
-                onOpenRecommendations={handleOpenRecommendations}
-                canOpenRecommendations={canOpenRecommendations}
               />
             )}
           </View>
@@ -425,13 +407,7 @@ const WIZARD_STEPS = [
 ];
 
 // 통합 분석 결과 렌더링
-function CombinedResultView({
-  result,
-  images = [],
-  onRestart,
-  onOpenRecommendations,
-  canOpenRecommendations,
-}) {
+function CombinedResultView({ result, images = [], onRestart }) {
   const {
     summary = '',
     details = '',
@@ -506,16 +482,6 @@ function CombinedResultView({
 
       <Section title="🪥 Personalized recommendations">
         <BulletList items={recommendations} />
-        <TouchableOpacity
-          style={[
-            styles.primaryButton,
-            { marginTop: 12, opacity: canOpenRecommendations ? 1 : 0.5 },
-          ]}
-          onPress={onOpenRecommendations}
-          disabled={!canOpenRecommendations}
-        >
-          <Text style={styles.primaryButtonText}>View personalized oral care products</Text>
-        </TouchableOpacity>
       </Section>
 
       {photoCards.length > 0 && (

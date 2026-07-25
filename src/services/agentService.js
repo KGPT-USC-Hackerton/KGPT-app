@@ -4,7 +4,7 @@
 // - 인증: Config.AGENT_DEMO_TOKEN 을 Authorization: Bearer 로만 사용(서버가 사용자 결정).
 //   user_id / 의료정보 / 설문 답변 원문을 절대 전송하지 않는다.
 // - 응답 envelope({ success, data } / { success:false, error_code, message }) 언랩.
-// - 요청별 AbortController 타임아웃(약 15s). 자동 retry 없음(특히 POST /shopify-cart).
+// - 요청별 AbortController 타임아웃(약 15s). 자동 retry 없음.
 // - Token 값은 로그/출력하지 않는다.
 import Config from 'react-native-config';
 
@@ -19,14 +19,11 @@ function getBaseUrl() {
   return Config && Config.API_BASE_URL ? Config.API_BASE_URL : null;
 }
 
-// 표준화된 에러(값 비노출). status / errorCode / message (+선택 cartRequestId).
-function makeAgentError(status, errorCode, message, extra = {}) {
+// 표준화된 에러(값 비노출). status / errorCode / message.
+function makeAgentError(status, errorCode, message) {
   const err = new Error(message || 'AGENT_ERROR');
   err.status = typeof status === 'number' ? status : 0;
   err.errorCode = errorCode || null;
-  if (extra && extra.cartRequestId) {
-    err.cartRequestId = extra.cartRequestId;
-  }
   return err;
 }
 
@@ -96,9 +93,7 @@ async function agentFetch(method, endpoint, { body, idempotencyKey, timeoutMs = 
 
   const errorCode = typeof json.error_code === 'string' ? json.error_code : null;
   const message = typeof json.message === 'string' ? json.message : 'An error occurred while processing the request.';
-  throw makeAgentError(response.status || 0, errorCode, message, {
-    cartRequestId: typeof json.cart_request_id === 'string' ? json.cart_request_id : undefined,
-  });
+  throw makeAgentError(response.status || 0, errorCode, message);
 }
 
 /**
@@ -114,30 +109,6 @@ export async function createSession({ history_id, survey_session_id } = {}, idem
   return agentFetch('POST', '/agent/sessions', { body, idempotencyKey });
 }
 
-/**
- * GET /agent/sessions/:sessionId/product-recommendations
- */
-export async function getProductRecommendations(sessionId) {
-  return agentFetch('GET', `/agent/sessions/${encodeURIComponent(sessionId)}/product-recommendations`, {});
-}
-
-/**
- * POST /agent/sessions/:sessionId/shopify-cart
- * body 는 { confirmed:true, proposal_hash, items:[{product_key, quantity}] } 만 전송한다.
- * (display_name / user_id / 의료정보 금지). 자동 retry 없음.
- * @param {string} idempotencyKey  cartCreateKey
- */
-export async function createShopifyCart(sessionId, { proposal_hash, items } = {}, idempotencyKey) {
-  const body = {
-    confirmed: true,
-    proposal_hash,
-    items: (items || []).map((it) => ({ product_key: it.product_key, quantity: it.quantity })),
-  };
-  return agentFetch('POST', `/agent/sessions/${encodeURIComponent(sessionId)}/shopify-cart`, { body, idempotencyKey });
-}
-
 export default {
   createSession,
-  getProductRecommendations,
-  createShopifyCart,
 };

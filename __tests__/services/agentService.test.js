@@ -10,11 +10,7 @@ jest.mock('react-native-config', () => ({
 }));
 
 import Config from 'react-native-config';
-import {
-  createSession,
-  getProductRecommendations,
-  createShopifyCart,
-} from '../../src/services/agentService';
+import { createSession } from '../../src/services/agentService';
 
 const FAKE_TOKEN = 'fake-agent-token.invalid';
 
@@ -61,65 +57,31 @@ describe('agentService', () => {
     expect(body).toEqual({ history_id: 'hist-1' });
   });
 
-  test('getProductRecommendations: GET + Authorization, data 언랩', async () => {
-    mockFetchOnce({ json: { success: true, data: { items: [], proposal_hash: 'abc' } } });
-    const data = await getProductRecommendations('sess.invalid');
-    expect(data).toEqual({ items: [], proposal_hash: 'abc' });
-    const [url, opts] = global.fetch.mock.calls[0];
-    expect(url).toBe('https://api.invalid/api/agent/sessions/sess.invalid/product-recommendations');
-    expect(opts.method).toBe('GET');
-    expect(opts.headers.Authorization).toBe(`Bearer ${FAKE_TOKEN}`);
-  });
-
-  test('createShopifyCart: Idempotency-Key + product_key/quantity만, display_name/user_id 미전송', async () => {
-    mockFetchOnce({
-      json: { success: true, data: { status: 'succeeded', checkout_url: 'https://checkout.invalid/x' } },
-    });
-    await createShopifyCart(
-      'sess.invalid',
-      {
-        proposal_hash: 'p'.repeat(64),
-        items: [{ product_key: 'TOOTHBRUSH_SOFT', quantity: 1, display_name: '부드러운 칫솔' }],
-      },
-      'idem-cart-1',
-    );
-    const [url, opts] = global.fetch.mock.calls[0];
-    expect(url).toBe('https://api.invalid/api/agent/sessions/sess.invalid/shopify-cart');
-    expect(opts.headers['Idempotency-Key']).toBe('idem-cart-1');
-
-    const body = JSON.parse(opts.body);
-    expect(body.confirmed).toBe(true);
-    expect(body.proposal_hash).toBe('p'.repeat(64));
-    expect(body.items).toEqual([{ product_key: 'TOOTHBRUSH_SOFT', quantity: 1 }]);
-    expect(JSON.stringify(body)).not.toContain('display_name');
-    expect(JSON.stringify(body)).not.toContain('user_id');
-  });
-
   test('실패 envelope의 error_code 보존', async () => {
     mockFetchOnce({
       ok: false,
       status: 409,
-      json: { success: false, error_code: 'PRODUCT_PROPOSAL_STALE', message: '변경됨', cart_request_id: 'cr-1' },
+      json: { success: false, error_code: 'INVALID_HISTORY', message: '변경됨' },
     });
     await expect(
-      createShopifyCart('s', { proposal_hash: 'x', items: [] }, 'k'),
-    ).rejects.toMatchObject({ status: 409, errorCode: 'PRODUCT_PROPOSAL_STALE', cartRequestId: 'cr-1' });
+      createSession({ history_id: 'h' }, 'k'),
+    ).rejects.toMatchObject({ status: 409, errorCode: 'INVALID_HISTORY' });
   });
 
   test('AbortError → AGENT_TIMEOUT(408)', async () => {
     global.fetch = jest.fn().mockRejectedValueOnce(
       Object.assign(new Error('aborted'), { name: 'AbortError' }),
     );
-    await expect(getProductRecommendations('s')).rejects.toMatchObject({
+    await expect(createSession({ history_id: 'h' }, 'k')).rejects.toMatchObject({
       status: 408,
       errorCode: 'AGENT_TIMEOUT',
     });
   });
 
-  test('네트워크 오류 → NETWORK_ERROR, Cart POST 자동 retry 0회 (fetch 1회)', async () => {
+  test('네트워크 오류 → NETWORK_ERROR, 자동 retry 0회 (fetch 1회)', async () => {
     global.fetch = jest.fn().mockRejectedValueOnce(new Error('Network request failed'));
     await expect(
-      createShopifyCart('s', { proposal_hash: 'x', items: [{ product_key: 'A', quantity: 1 }] }, 'k'),
+      createSession({ history_id: 'h' }, 'k'),
     ).rejects.toMatchObject({ status: 0, errorCode: 'NETWORK_ERROR' });
     expect(global.fetch).toHaveBeenCalledTimes(1);
   });
@@ -146,7 +108,7 @@ describe('agentService', () => {
     const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     const errSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     mockFetchOnce({ json: { success: true, data: {} } });
-    await getProductRecommendations('s');
+    await createSession({ history_id: 'h' }, 'k');
     const logged = [...logSpy.mock.calls, ...errSpy.mock.calls].flat().join(' ');
     expect(logged).not.toContain(FAKE_TOKEN);
   });

@@ -22,8 +22,6 @@ import AppSettingsScreen from './screens/AppSettingsScreen';
 import HelpScreen from './screens/HelpScreen';
 import TermsOfServiceScreen from './screens/TermsOfServiceScreen';
 import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
-import ProductRecommendationScreen from './screens/care/ProductRecommendationScreen';
-import CartReviewScreen from './screens/care/CartReviewScreen';
 import { getCurrentUser } from './services/authService';
 import { getSurveyCompleted } from './utils/storage';
 
@@ -37,8 +35,6 @@ export function CareStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="CareMain" component={CareScreen} />
-      <Stack.Screen name="ProductRecommendation" component={ProductRecommendationScreen} />
-      <Stack.Screen name="CartReview" component={CartReviewScreen} />
     </Stack.Navigator>
   );
 }
